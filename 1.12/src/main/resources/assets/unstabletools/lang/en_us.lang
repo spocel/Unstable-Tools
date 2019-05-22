@@ -1,0 +1,15 @@
+item.unstabletools:unstable_ingot.name=Unstable Ingot
+
+item.unstabletools:unstable_pickaxe.name=Unstable Pickaxe
+item.unstabletools:unstable_axe.name=Unstable Axe
+item.unstabletools:unstable_sword.name=Unstable Sword
+item.unstabletools:unstable_spade.name=Unstable Shovel
+item.unstabletools:unstable_hoe.name=Unstable Hoe
+
+item.unstabletools:unstable_helmet.name=Unstable Helmet
+item.unstabletools:unstable_chestplate.name=Unstable Chestplate
+item.unstabletools:unstable_leggings.name=Unstable Leggings
+item.unstabletools:unstable_boots.name=Unstable Boots
+
+itemGroup.unstabletools=Unstable Tools
+

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "iii",
+    "i i"
+  ],
+  "key": {
+    "i": {
+      "type": "forge:ore_dict",
+      "ore": "ingotUnstable"
+    }
+  },
+  "result": {
+    "item": "unstabletools:unstable_helmet"
+  }
+}

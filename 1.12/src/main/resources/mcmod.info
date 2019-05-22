@@ -1,0 +1,16 @@
+[
+{
+  "modid": "unstabletools",
+  "name": "Unstable Tools",
+  "description": "Port of Extra Utilities 1 tools with armor",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Tfarecmin"],
+  "credits": "Tema",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
