@@ -1,0 +1,40 @@
+{
+  "pattern": [
+    "TGF",
+    "EDE",
+    "cBC"
+  ],
+  "type": "unstabletools:advanced_division_sign",
+  "key": {
+    "B": {
+      "item": "minecraft:dragon_breath"
+    },
+    "C": {
+      "item": "minecraft:chorus_flower"
+    },
+    "D": {
+      "item": "unstabletools:division_sign"
+    },
+    "T": {
+      "item": "minecraft:totem_of_undying"
+    },
+    "E": {
+      "item": "unstabletools:unstable_block"
+    },
+    "F": {
+      "item": "minecraft:elytra"
+    },
+    "G": {
+      "item": "minecraft:nether_star"
+    },
+    "c": {
+      "item": "minecraft:clay"
+    }
+  },
+  "result": {
+    "item": "unstabletools:division_sign",
+    "nbt": {
+      "stable": true
+    }
+  }
+}

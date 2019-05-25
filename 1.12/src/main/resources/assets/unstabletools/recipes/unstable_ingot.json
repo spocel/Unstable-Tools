@@ -1,18 +1,17 @@
 {
-  "type": "minecraft:crafting_shaped",
   "pattern": [
-    "i",
-    "s",
+    "I",
+    "D",
     "d"
   ],
+  "type": "unstabletools:division",
   "key": {
-    "i": {
+    "I": {
       "type": "forge:ore_dict",
       "ore": "ingotIron"
     },
-    "s": {
-      "type": "forge:ore_dict",
-      "ore": "stickWood"
+    "D": {
+      "item": "unstabletools:division_sign"
     },
     "d": {
       "type": "forge:ore_dict",

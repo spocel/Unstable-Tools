@@ -1,14 +1,22 @@
 package com.tfar.unstabletools;
 
 import com.tfar.unstabletools.armor.ItemUnstableArmor;
+import com.tfar.unstabletools.block.BlockUnstableBlock;
+import com.tfar.unstabletools.item.ItemDivisionSign;
+import com.tfar.unstabletools.item.ItemUnstableIngot;
 import com.tfar.unstabletools.tools.*;
-import net.minecraft.item.Item;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class ObjectHolders {
 
   @GameRegistry.ObjectHolder("unstabletools:unstable_ingot")
-  public static Item unstableIngot;
+  public static ItemUnstableIngot unstableIngot;
+
+  @GameRegistry.ObjectHolder("unstabletools:unstable_block")
+  public static BlockUnstableBlock unstableBlock;
+
+  @GameRegistry.ObjectHolder("unstabletools:division_sign")
+  public static ItemDivisionSign divisionSign;
 
   @GameRegistry.ObjectHolder("unstabletools:unstable_axe")
   public static ItemUnstableAxe unstableAxe;
@@ -24,6 +32,9 @@ public class ObjectHolders {
 
   @GameRegistry.ObjectHolder("unstabletools:unstable_hoe")
   public static ItemUnstableHoe unstableHoe;
+
+  @GameRegistry.ObjectHolder("unstabletools:unstable_shears")
+  public static ItemUnstableShears unstableShears;
 
   @GameRegistry.ObjectHolder("unstabletools:unstable_helmet")
   public static ItemUnstableArmor unstableHelmet;
