@@ -25,14 +25,12 @@ import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -88,35 +86,35 @@ public class UnstableTools {
   @SubscribeEvent
   public static void registerBlock(RegistryEvent.Register<Block> event) {
     IForgeRegistry<Block> registry = event.getRegistry();
-    helper(new BlockUnstableBlock(Material.IRON), "unstable_block", registry, 3000, 5);
+    registerBlock(new BlockUnstableBlock(Material.IRON), "unstable_block", registry, 3000, 5);
   }
 
   @SubscribeEvent
   public static void registerItems(RegistryEvent.Register<Item> event) {
     IForgeRegistry<Item> registry = event.getRegistry();
 
-    helper(new ItemUnstableIngot(), "unstable_ingot", registry);
-    helper(new ItemUnstableShears(), "unstable_shears", registry);
+    registerItem(new ItemUnstableIngot(), "unstable_ingot", registry);
+    registerItem(new ItemUnstableShears(), "unstable_shears", registry);
 
-    helper2(ObjectHolders.unstableBlock, registry);
+    registerItemBlock(ObjectHolders.unstableBlock, registry);
 
-    helper(new ItemUnstableAxe(UNSTABLE), "unstable_axe", registry);
-    helper(new ItemUnstableSpade(UNSTABLE), "unstable_spade", registry);
-    helper(new ItemUnstablePickaxe(UNSTABLE), "unstable_pickaxe", registry);
-    helper(new ItemUnstableSword(UNSTABLE), "unstable_sword", registry);
-    helper(new ItemUnstableHoe(UNSTABLE), "unstable_hoe", registry);
+    registerItem(new ItemUnstableAxe(UNSTABLE), "unstable_axe", registry);
+    registerItem(new ItemUnstableSpade(UNSTABLE), "unstable_spade", registry);
+    registerItem(new ItemUnstablePickaxe(UNSTABLE), "unstable_pickaxe", registry);
+    registerItem(new ItemUnstableSword(UNSTABLE), "unstable_sword", registry);
+    registerItem(new ItemUnstableHoe(UNSTABLE), "unstable_hoe", registry);
 
-    helper(new ItemUnstableArmor(UNSTABLE_ARMOR, EntityEquipmentSlot.HEAD), "unstable_helmet", registry);
-    helper(new ItemUnstableArmor(UNSTABLE_ARMOR, EntityEquipmentSlot.CHEST), "unstable_chestplate", registry);
-    helper(new ItemUnstableArmor(UNSTABLE_ARMOR, EntityEquipmentSlot.LEGS), "unstable_leggings", registry);
-    helper(new ItemUnstableArmor(UNSTABLE_ARMOR, EntityEquipmentSlot.FEET), "unstable_boots", registry);
+    registerItem(new ItemUnstableArmor(UNSTABLE_ARMOR, EntityEquipmentSlot.HEAD), "unstable_helmet", registry);
+    registerItem(new ItemUnstableArmor(UNSTABLE_ARMOR, EntityEquipmentSlot.CHEST), "unstable_chestplate", registry);
+    registerItem(new ItemUnstableArmor(UNSTABLE_ARMOR, EntityEquipmentSlot.LEGS), "unstable_leggings", registry);
+    registerItem(new ItemUnstableArmor(UNSTABLE_ARMOR, EntityEquipmentSlot.FEET), "unstable_boots", registry);
 
     ItemDivisionSign divisionSign = new ItemDivisionSign();
     divisionSign.setMaxStackSize(1);
-    helper(divisionSign, "division_sign", registry);
+    registerItem(divisionSign, "division_sign", registry);
   }
 
-  private static void helper(Block block, String name, IForgeRegistry<Block> registry, float blastResistance, float hardness) {
+  private static void registerBlock(Block block, String name, IForgeRegistry<Block> registry, float blastResistance, float hardness) {
     block.setRegistryName(name);
     block.setTranslationKey(block.getRegistryName().toString());
     block.setCreativeTab(creativeTab);
@@ -126,7 +124,7 @@ public class UnstableTools {
     registry.register(block);
   }
 
-  private static void helper(Item item, String name, IForgeRegistry<Item> registry) {
+  private static void registerItem(Item item, String name, IForgeRegistry<Item> registry) {
     item.setRegistryName(name);
     item.setTranslationKey(item.getRegistryName().toString());
     item.setCreativeTab(creativeTab);
@@ -134,7 +132,7 @@ public class UnstableTools {
     registry.register(item);
   }
 
-  private static void helper2(Block block, IForgeRegistry<Item> registry) {
+  private static void registerItemBlock(Block block, IForgeRegistry<Item> registry) {
     ItemBlock itemBlock = new ItemBlock(block);
     itemBlock.setRegistryName(block.getRegistryName());
     registry.register(itemBlock);
@@ -143,12 +141,12 @@ public class UnstableTools {
   @SubscribeEvent
   public static void registerModels(ModelRegistryEvent event) {
     for (Item item : MOD_ITEMS)
-      helper3(item);
+      registerModelLocation(item);
     for (Block block : MOD_BLOCKS)
-      helper3(Item.getItemFromBlock(block));
+      registerModelLocation(Item.getItemFromBlock(block));
   }
 
-  private static void helper3(Item item) {
+  private static void registerModelLocation(Item item) {
     ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(item.getRegistryName(), "inventory"));
   }
   @SubscribeEvent
