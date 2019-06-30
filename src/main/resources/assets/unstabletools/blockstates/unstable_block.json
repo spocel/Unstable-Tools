@@ -1,7 +1,7 @@
 {
   "variants": {
-    "normal": {
-      "model": "unstabletools:unstable_block"
+    "": {
+      "model": "unstabletools:block/unstable_block"
     }
   }
 }

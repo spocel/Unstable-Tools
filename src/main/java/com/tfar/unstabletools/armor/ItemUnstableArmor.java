@@ -1,16 +1,24 @@
 package com.tfar.unstabletools.armor;
 
-import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.ItemArmor;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.ArmorItem;
+import net.minecraft.item.IArmorMaterial;
 import net.minecraft.item.ItemStack;
 
-public class ItemUnstableArmor extends ItemArmor {
-  public ItemUnstableArmor(ArmorMaterial materialIn, EntityEquipmentSlot equipmentSlotIn) {
-    super(materialIn, 0, equipmentSlotIn);
+import javax.annotation.Nonnull;
+
+public class ItemUnstableArmor extends ArmorItem {
+  public ItemUnstableArmor(Properties properties, IArmorMaterial materialIn, EquipmentSlotType equipmentSlotIn) {
+    super(materialIn, equipmentSlotIn, properties);
   }
 
   @Override
   public int getMaxDamage(ItemStack stack) {
     return 0;
+  }
+
+  @Override
+  public boolean getIsRepairable(ItemStack toRepair,@Nonnull ItemStack repair) {
+    return false;
   }
 }

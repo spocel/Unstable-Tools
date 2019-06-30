@@ -1,11 +1,12 @@
 package com.tfar.unstabletools.tools;
 
+import net.minecraft.item.IItemTier;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemSword;
+import net.minecraft.item.SwordItem;
 
-public class ItemUnstableSword extends ItemSword {
-  public ItemUnstableSword(ToolMaterial material) {
-    super(material);
+public class ItemUnstableSword extends SwordItem {
+  public ItemUnstableSword(IItemTier material,int attackDamage,float attackSpeed,Properties properties) {
+    super(material,attackDamage,attackSpeed,properties);
   }
 
   @Override

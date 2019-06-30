@@ -1,20 +1,19 @@
 package com.tfar.unstabletools.block;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 
 public class BlockUnstableBlock extends Block {
-  public BlockUnstableBlock(Material materialIn) {
-    super(materialIn);
+  public BlockUnstableBlock(Properties properties) {
+    super(properties);
   }
 
   @Override
-  @SideOnly(Side.CLIENT)
+  @OnlyIn(Dist.CLIENT)
   @Nonnull
   public BlockRenderLayer getRenderLayer() {
     return BlockRenderLayer.TRANSLUCENT;

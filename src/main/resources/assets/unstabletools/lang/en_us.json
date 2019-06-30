@@ -1,0 +1,31 @@
+{
+  "item.unstabletools.unstable_ingot": "Unstable Ingot",
+  "item.unstabletools.unstable_block": "Unstable Block",
+
+
+  "item.unstabletools.unstable_pickaxe": "Unstable Pickaxe",
+  "item.unstabletools.unstable_axe": "Unstable Axe",
+  "item.unstabletools.unstable_sword": "Unstable Sword",
+  "item.unstabletools.unstable_spade": "Unstable Shovel",
+  "item.unstabletools.unstable_hoe": "Unstable Hoe",
+  "item.unstabletools.unstable_shears": "Unstable Shears",
+
+  "item.unstabletools.division_sign": "Division Sign",
+
+  "item.unstabletools.unstable_helmet": "Unstable Helmet",
+  "item.unstabletools.unstable_chestplate": "Unstable Chestplate",
+  "item.unstabletools.unstable_leggings": "Unstable Leggings",
+  "item.unstabletools.unstable_boots": "Unstable Boots",
+
+  "itemGroup.unstabletools": "Unstable Tools",
+
+  "unstabletools.early": "Too early",
+  "unstabletools.ontime": "The time is right",
+  "unstabletools.late": "Too late",
+  "unstabletools.incomplete": "Missing one or more redstone wires",
+  "unstabletools.nosky": "Can't see sky",
+  "unstabletools.ready": "Perform the sacrifice",
+
+  "death.attack.divide_by_diamond": "%1$s tried to divide by diamond",
+  "death.attack.escape_divide_by_diamond": "%1$s tried to escape divison by diamond"
+}

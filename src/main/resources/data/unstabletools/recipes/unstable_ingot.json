@@ -7,15 +7,13 @@
   "type": "unstabletools:division",
   "key": {
     "I": {
-      "type": "forge:ore_dict",
-      "ore": "ingotIron"
+      "tag": "forge:ingots/iron"
     },
     "D": {
       "item": "unstabletools:division_sign"
     },
     "d": {
-      "type": "forge:ore_dict",
-      "ore": "gemDiamond"
+      "tag": "forge:gems/diamond"
     }
   },
   "result": {

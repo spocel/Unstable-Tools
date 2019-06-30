@@ -7,8 +7,7 @@
   ],
   "key": {
     "i": {
-      "type": "forge:ore_dict",
-      "ore": "ingotUnstable"
+      "tag": "forge:ingots/unstable"
     }
   },
   "result": {

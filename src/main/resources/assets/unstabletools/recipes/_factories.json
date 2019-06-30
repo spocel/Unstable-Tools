@@ -1,6 +1,0 @@
-{
-  "recipes": {
-    "division": "com.tfar.unstabletools.crafting.RecipeDivisionFactory",
-    "advanced_division_sign": "com.tfar.unstabletools.crafting.RecipeAdvancedDivisionSignFactory"
-  }
-}

@@ -1,31 +1,28 @@
 package com.tfar.unstabletools.tools;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.CreatureAttribute;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.EnumCreatureAttribute;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.MobEffects;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemAxe;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.IItemTier;
+import net.minecraft.potion.Effects;
+import net.minecraft.item.AxeItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.PotionEffect;
+import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Mod;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 @Mod.EventBusSubscriber
-public class ItemUnstableAxe extends ItemAxe {
+public class ItemUnstableAxe extends AxeItem {
 
-  public ItemUnstableAxe(Item.ToolMaterial materialIn, float damage, float attackSpeed) {
-    super(materialIn, damage, attackSpeed);
+  public ItemUnstableAxe(IItemTier materialIn, float damage, float attackSpeed, Properties properties) {
+    super(materialIn, damage, attackSpeed, properties);
   }
 
-  public ItemUnstableAxe(Item.ToolMaterial materialIn) {
-    this(materialIn, 9, -3);
+  public ItemUnstableAxe(IItemTier materialIn,Properties properties) {
+    this(materialIn, 9, -3,properties);
   }
 
   @Override
@@ -34,25 +31,19 @@ public class ItemUnstableAxe extends ItemAxe {
   }
 
   @Override
-  public int getHarvestLevel(ItemStack stack, @Nonnull String toolClass, @Nullable EntityPlayer player, @Nullable IBlockState blockState) {
-    return 4;
-  }
+  public void inventoryTick(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
+    if (!isSelected || !(entityIn instanceof PlayerEntity) || worldIn.isRemote) return;
+    if (((PlayerEntity) entityIn).getRNG().nextFloat() > .05) return;
+    ((PlayerEntity) entityIn).getFoodStats().addStats(1, 0.2F);  }
 
   @Override
-  public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
-    if (!isSelected || !(entityIn instanceof EntityPlayer) || worldIn.isRemote) return;
-    if (((EntityPlayer) entityIn).getRNG().nextFloat() > .05) return;
-    ((EntityPlayer) entityIn).getFoodStats().addStats(1, 0.2F);
-  }
-
-  @Override
-  public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity) {
-    if (entity instanceof EntityLivingBase) {
-      if (((EntityLivingBase) entity).getCreatureAttribute() == EnumCreatureAttribute.UNDEAD)
+  public boolean onLeftClickEntity(ItemStack stack, PlayerEntity player, Entity entity) {
+    if (entity instanceof LivingEntity) {
+      if (((LivingEntity) entity).getCreatureAttribute() == CreatureAttribute.UNDEAD)
         entity.attackEntityFrom(DamageSource.causePlayerDamage(player), 8);
-      else ((EntityLivingBase) entity).heal(8);
+      else ((LivingEntity) entity).heal(8);
     }
-    player.addPotionEffect(new PotionEffect(MobEffects.HUNGER,20,4));
+    player.addPotionEffect(new EffectInstance(Effects.HUNGER,20,4));
     return true;
   }
 }

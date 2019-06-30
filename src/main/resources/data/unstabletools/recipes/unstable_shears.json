@@ -6,12 +6,10 @@
   ],
   "key": {
     "i": {
-      "type": "forge:ore_dict",
-      "ore": "ingotUnstable"
+      "tag": "forge:ingots/unstable"
     },
     "o": {
-      "type": "forge:ore_dict",
-      "ore": "obsidian"
+      "item": "minecraft:obsidian"
     }
   },
   "result": {

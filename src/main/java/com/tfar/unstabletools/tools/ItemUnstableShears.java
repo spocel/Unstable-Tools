@@ -1,34 +1,41 @@
 package com.tfar.unstabletools.tools;
 
-import com.google.common.collect.Sets;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemShears;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ShearsItem;
+import net.minecraftforge.common.ToolType;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.HashSet;
 import java.util.Set;
 
 @Mod.EventBusSubscriber
-public class ItemUnstableShears extends ItemShears {
+public class ItemUnstableShears extends ShearsItem {
 
-  @Override
-  @Nonnull
-  public Set<String> getToolClasses(ItemStack stack) {
-    return Sets.newHashSet("pickaxe");
+  public ItemUnstableShears(Properties builder) {
+    super(builder);
   }
 
   @Override
-  public int getHarvestLevel(ItemStack stack, String toolClass, @Nullable EntityPlayer player, @Nullable IBlockState blockState) {
+  public int getHarvestLevel(ItemStack stack, ToolType tool, @Nullable PlayerEntity player, @Nullable BlockState blockState) {
     return 3;
   }
 
+  @Nonnull
   @Override
-  public float getDestroySpeed(ItemStack stack, IBlockState state) {
+  public Set<ToolType> getToolTypes(ItemStack stack) {
+    Set<ToolType> types = new HashSet<>();
+    types.add(ToolType.PICKAXE);
+    return types;
+  }
+
+  @Override
+  public float getDestroySpeed(ItemStack stack, BlockState state) {
     return 20;
   }
 
@@ -38,13 +45,13 @@ public class ItemUnstableShears extends ItemShears {
   }
 
   @Override
-  public boolean canHarvestBlock(IBlockState block) {
+  public boolean canHarvestBlock(BlockState block) {
     return true;
   }
 
   @SubscribeEvent
   public static void itemDrops(BlockEvent.HarvestDropsEvent e) {
-    EntityPlayer player = e.getHarvester();
+    PlayerEntity player = e.getHarvester();
     if (player != null && player.getHeldItemMainhand().getItem() instanceof ItemUnstableShears)
       e.getDrops().removeIf(player::addItemStackToInventory);
   }

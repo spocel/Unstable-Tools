@@ -1,11 +1,12 @@
 package com.tfar.unstabletools.tools;
 
-import net.minecraft.item.ItemPickaxe;
+import net.minecraft.item.IItemTier;
+import net.minecraft.item.PickaxeItem;
 import net.minecraft.item.ItemStack;
 
-public class ItemUnstablePickaxe extends ItemPickaxe {
-  public ItemUnstablePickaxe(ToolMaterial material) {
-    super(material);
+public class ItemUnstablePickaxe extends PickaxeItem {
+  public ItemUnstablePickaxe(IItemTier material,int attackDamage,float attackSpeed,Properties properties) {
+    super(material,attackDamage,attackSpeed,properties);
   }
 
   @Override
