@@ -22,7 +22,7 @@ public class ItemUnstableShears extends ShearsItem {
   }
 
   @Override
-  public int getHarvestLevel(ItemStack stack, ToolType tool, @Nullable PlayerEntity player, @Nullable BlockState blockState) {
+  public int getHarvestLevel(ItemStack stack,@Nonnull ToolType tool, @Nullable PlayerEntity player, @Nullable BlockState blockState) {
     return 3;
   }
 
@@ -50,6 +50,7 @@ public class ItemUnstableShears extends ShearsItem {
   }
 
   @SubscribeEvent
+  @SuppressWarnings("unused")
   public static void itemDrops(BlockEvent.HarvestDropsEvent e) {
     PlayerEntity player = e.getHarvester();
     if (player != null && player.getHeldItemMainhand().getItem() instanceof ItemUnstableShears)

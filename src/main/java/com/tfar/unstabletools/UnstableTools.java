@@ -89,12 +89,12 @@ public class UnstableTools {
     private int[] array = new int[]{4, 7, 9, 4};
 
     @Override
-    public int getDurability(EquipmentSlotType slotIn) {
+    public int getDurability(@Nonnull EquipmentSlotType slotIn) {
       return 0;
     }
 
     @Override
-    public int getDamageReductionAmount(EquipmentSlotType slotIn) {
+    public int getDamageReductionAmount(@Nonnull EquipmentSlotType slotIn) {
       return array[slotIn.getIndex()];
     }
 
@@ -103,16 +103,19 @@ public class UnstableTools {
       return 25;
     }
 
+    @Nonnull
     @Override
     public SoundEvent getSoundEvent() {
       return SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND;
     }
 
+    @Nonnull
     @Override
     public Ingredient getRepairMaterial() {
       return Ingredient.fromItems(ObjectHolders.unstableIngot);
     }
 
+    @Nonnull
     @Override
     public String getName() {
       return "unstable";
@@ -170,10 +173,10 @@ public class UnstableTools {
       registerItem(new ItemUnstableSword(UNSTABLE,3,-2.4f,properties), "unstable_sword", registry);
       registerItem(new ItemUnstableHoe(UNSTABLE,1,properties), "unstable_hoe", registry);
 
-      registerItem(new ItemUnstableArmor(properties, UNSTABLE_ARMOR, EquipmentSlotType.HEAD), "unstabletools:unstable_helmet",registry);
-      registerItem(new ItemUnstableArmor(properties,UNSTABLE_ARMOR, EquipmentSlotType.CHEST), "unstabletools:unstable_chestplate",registry);
-      registerItem(new ItemUnstableArmor(properties,UNSTABLE_ARMOR, EquipmentSlotType.LEGS), "unstabletools:unstable_leggings",registry);
-      registerItem(new ItemUnstableArmor(properties,UNSTABLE_ARMOR, EquipmentSlotType.FEET), "unstabletools:unstable_boots",registry);
+      registerItem(new ItemUnstableArmor(properties, UNSTABLE_ARMOR, EquipmentSlotType.HEAD), "unstable_helmet",registry);
+      registerItem(new ItemUnstableArmor(properties,UNSTABLE_ARMOR, EquipmentSlotType.CHEST), "unstable_chestplate",registry);
+      registerItem(new ItemUnstableArmor(properties,UNSTABLE_ARMOR, EquipmentSlotType.LEGS), "unstable_leggings",registry);
+      registerItem(new ItemUnstableArmor(properties,UNSTABLE_ARMOR, EquipmentSlotType.FEET), "unstable_boots",registry);
       registerItem(new ItemDivisionSign(properties), "division_sign",registry);
     }
     @SubscribeEvent
@@ -185,7 +188,7 @@ public class UnstableTools {
       registry.register(obj);
     }
 
-    private static void registerBlock(Block block, String name, IForgeRegistry<Block> registry) {
+    private static void registerBlock(Block block,String name, IForgeRegistry<Block> registry) {
       registry.register(block.setRegistryName(name));
     }
 

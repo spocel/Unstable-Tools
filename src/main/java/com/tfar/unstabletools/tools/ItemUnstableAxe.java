@@ -1,6 +1,5 @@
 package com.tfar.unstabletools.tools;
 
-import net.minecraft.block.BlockState;
 import net.minecraft.entity.CreatureAttribute;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -12,7 +11,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ToolType;
 import net.minecraftforge.fml.common.Mod;
+
+import javax.annotation.Nonnull;
+import java.util.HashSet;
+import java.util.Set;
 
 @Mod.EventBusSubscriber
 public class ItemUnstableAxe extends AxeItem {
@@ -28,6 +32,14 @@ public class ItemUnstableAxe extends AxeItem {
   @Override
   public int getMaxDamage(ItemStack stack) {
     return 0;
+  }
+
+  @Nonnull
+  @Override
+  public Set<ToolType> getToolTypes(ItemStack stack) {
+    Set<ToolType> types = new HashSet<>();
+    types.add(ToolType.AXE);
+    return types;
   }
 
   @Override
