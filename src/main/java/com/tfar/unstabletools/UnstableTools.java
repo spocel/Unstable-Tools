@@ -142,18 +142,12 @@ public class UnstableTools {
 
   @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
   public static class RegistryEvents {
-    @SubscribeEvent
-    public static void colors(ColorHandlerEvent.Item e) {
-      ItemColors itemColors = e.getItemColors();
-      itemColors.register(ObjectHolders.unstableIngot::getColor, (Item) ObjectHolders.unstableIngot);
-      itemColors.register(ObjectHolders.divisionSign::getColor, (Item) ObjectHolders.divisionSign);
 
-    }
 
     @SubscribeEvent
     public static void registerBlock(RegistryEvent.Register<Block> event) {
       IForgeRegistry<Block> registry = event.getRegistry();
-      registerBlock(new BlockUnstableBlock(Block.Properties.create(Material.IRON).hardnessAndResistance(5,6000)), "unstable_block", registry);
+      registerBlock(new BlockUnstableBlock(Block.Properties.create(Material.IRON).hardnessAndResistance(5, 6000)), "unstable_block", registry);
     }
 
     @SubscribeEvent
@@ -165,20 +159,21 @@ public class UnstableTools {
       registerItem(new ItemUnstableIngot(properties), "unstable_ingot", registry);
       registerItem(new ItemUnstableShears(properties), "unstable_shears", registry);
 
-      registerItemBlock(ObjectHolders.unstableBlock,properties, registry);
+      registerItemBlock(ObjectHolders.unstableBlock, properties, registry);
 
-      registerItem(new ItemUnstableAxe(UNSTABLE,properties), "unstable_axe", registry);
-      registerItem(new ItemUnstableSpade(UNSTABLE, 3, -1.5f,properties), "unstable_spade", registry);
-      registerItem(new ItemUnstablePickaxe(UNSTABLE, 1, -2.8f,properties), "unstable_pickaxe", registry);
-      registerItem(new ItemUnstableSword(UNSTABLE,3,-2.4f,properties), "unstable_sword", registry);
-      registerItem(new ItemUnstableHoe(UNSTABLE,1,properties), "unstable_hoe", registry);
+      registerItem(new ItemUnstableAxe(UNSTABLE, properties), "unstable_axe", registry);
+      registerItem(new ItemUnstableSpade(UNSTABLE, 3, -1.5f, properties), "unstable_spade", registry);
+      registerItem(new ItemUnstablePickaxe(UNSTABLE, 1, -2.8f, properties), "unstable_pickaxe", registry);
+      registerItem(new ItemUnstableSword(UNSTABLE, 3, -2.4f, properties), "unstable_sword", registry);
+      registerItem(new ItemUnstableHoe(UNSTABLE, 1, properties), "unstable_hoe", registry);
 
-      registerItem(new ItemUnstableArmor(properties, UNSTABLE_ARMOR, EquipmentSlotType.HEAD), "unstable_helmet",registry);
-      registerItem(new ItemUnstableArmor(properties,UNSTABLE_ARMOR, EquipmentSlotType.CHEST), "unstable_chestplate",registry);
-      registerItem(new ItemUnstableArmor(properties,UNSTABLE_ARMOR, EquipmentSlotType.LEGS), "unstable_leggings",registry);
-      registerItem(new ItemUnstableArmor(properties,UNSTABLE_ARMOR, EquipmentSlotType.FEET), "unstable_boots",registry);
-      registerItem(new ItemDivisionSign(properties), "division_sign",registry);
+      registerItem(new ItemUnstableArmor(properties, UNSTABLE_ARMOR, EquipmentSlotType.HEAD), "unstable_helmet", registry);
+      registerItem(new ItemUnstableArmor(properties, UNSTABLE_ARMOR, EquipmentSlotType.CHEST), "unstable_chestplate", registry);
+      registerItem(new ItemUnstableArmor(properties, UNSTABLE_ARMOR, EquipmentSlotType.LEGS), "unstable_leggings", registry);
+      registerItem(new ItemUnstableArmor(properties, UNSTABLE_ARMOR, EquipmentSlotType.FEET), "unstable_boots", registry);
+      registerItem(new ItemDivisionSign(properties), "division_sign", registry);
     }
+
     @SubscribeEvent
     public static void registerSerials(RegistryEvent.Register<IRecipeSerializer<?>> event) {
 
@@ -188,7 +183,7 @@ public class UnstableTools {
       registry.register(obj);
     }
 
-    private static void registerBlock(Block block,String name, IForgeRegistry<Block> registry) {
+    private static void registerBlock(Block block, String name, IForgeRegistry<Block> registry) {
       registry.register(block.setRegistryName(name));
     }
 
@@ -198,12 +193,15 @@ public class UnstableTools {
       registry.register(item);
     }
 
-    private static void registerItemBlock(Block block, Item.Properties properties,IForgeRegistry<Item> registry) {
-      BlockItem itemBlock = new BlockItem(block,properties);
+    private static void registerItemBlock(Block block, Item.Properties properties, IForgeRegistry<Item> registry) {
+      BlockItem itemBlock = new BlockItem(block, properties);
       itemBlock.setRegistryName(block.getRegistryName());
       registry.register(itemBlock);
     }
   }
+
+
+
   @SubscribeEvent
   public static void onEvent(LivingDropsEvent event) {
     LivingEntity entity = event.getEntityLiving();
