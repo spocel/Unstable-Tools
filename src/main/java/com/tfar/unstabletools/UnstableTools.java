@@ -8,8 +8,6 @@ import com.tfar.unstabletools.item.ItemUnstableIngot;
 import com.tfar.unstabletools.tools.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.item.ItemEntity;
@@ -19,32 +17,26 @@ import net.minecraft.item.*;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.SpecialRecipeSerializer;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.Tag;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.ObjectHolder;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+
+import static com.tfar.unstabletools.UnstableTools.ObjectHolders.unstable_block;
 
 @Mod(value = UnstableTools.MODID)
 public class UnstableTools {
+
   public static final String MODID = "unstabletools";
 
   public static class UnstableTier implements IItemTier {
@@ -77,10 +69,9 @@ public class UnstableTools {
     @Nonnull
     @Override
     public Ingredient getRepairMaterial() {
-      return null;
+      return Ingredient.fromItems(ObjectHolders.unstable_ingot);
     }
   }
-
 
   public static final IItemTier UNSTABLE = new UnstableTier();
 
@@ -112,7 +103,7 @@ public class UnstableTools {
     @Nonnull
     @Override
     public Ingredient getRepairMaterial() {
-      return Ingredient.fromItems(ObjectHolders.unstableIngot);
+      return Ingredient.fromItems(ObjectHolders.unstable_ingot);
     }
 
     @Nonnull
@@ -136,14 +127,12 @@ public class UnstableTools {
   public static ItemGroup creativeTab = new ItemGroup(MODID) {
     @Override
     public ItemStack createIcon() {
-      return new ItemStack(ObjectHolders.unstablePickaxe);
+      return new ItemStack(ObjectHolders.unstable_pickaxe);
     }
   };
 
   @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
   public static class RegistryEvents {
-
-
     @SubscribeEvent
     public static void registerBlock(RegistryEvent.Register<Block> event) {
       IForgeRegistry<Block> registry = event.getRegistry();
@@ -159,7 +148,7 @@ public class UnstableTools {
       registerItem(new ItemUnstableIngot(properties), "unstable_ingot", registry);
       registerItem(new ItemUnstableShears(properties), "unstable_shears", registry);
 
-      registerItemBlock(ObjectHolders.unstableBlock, properties, registry);
+      registerItem(new BlockItem(unstable_block, properties), unstable_block.getRegistryName().toString(), registry);
 
       registerItem(new ItemUnstableAxe(UNSTABLE, properties), "unstable_axe", registry);
       registerItem(new ItemUnstableSpade(UNSTABLE, 3, -1.5f, properties), "unstable_spade", registry);
@@ -192,42 +181,31 @@ public class UnstableTools {
       MOD_ITEMS.add(item);
       registry.register(item);
     }
-
-    private static void registerItemBlock(Block block, Item.Properties properties, IForgeRegistry<Item> registry) {
-      BlockItem itemBlock = new BlockItem(block, properties);
-      itemBlock.setRegistryName(block.getRegistryName());
-      registry.register(itemBlock);
-    }
   }
-
-
 
   @SubscribeEvent
   public static void onEvent(LivingDropsEvent event) {
     LivingEntity entity = event.getEntityLiving();
     if (entity instanceof WitherEntity && (event.getSource().getTrueSource() instanceof PlayerEntity) && !(event.getSource().getTrueSource() instanceof FakePlayer)) {
 
-      ItemStack itemStackToDrop = new ItemStack(ObjectHolders.divisionSign);
+      ItemStack itemStackToDrop = new ItemStack(ObjectHolders.division_sign);
       event.getDrops().add(new ItemEntity(entity.world, entity.posX,
               entity.posY, entity.posZ, itemStackToDrop));
     }
   }
 
-  @Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
-  public static class TooltipEvent {
-    @SubscribeEvent
-    public static void onTooltip(ItemTooltipEvent e) {
+  @ObjectHolder(MODID)
+  public static class ObjectHolders {
 
-      if(!Screen.hasControlDown())return;
-      List<ITextComponent> tooltips = e.getToolTip();
-      Item item = e.getItemStack().getItem();
-      Map<ResourceLocation, Tag<Item>> tagmap = ItemTags.getCollection().getTagMap();
-      for (Map.Entry<ResourceLocation, Tag<Item>> entry: tagmap.entrySet()){
-        if (item.isIn(entry.getValue())){
-          tooltips.add(new StringTextComponent(entry.getKey().toString()).applyTextStyle(TextFormatting.DARK_GRAY));
-        }
-      }
-    }
+    public static final Item unstable_ingot = null;
+
+    public static final Block unstable_block = null;
+
+    public static final Item division_sign = null;
+
+    public static Item unstable_pickaxe = null;
+
+    public static final IRecipeSerializer<?> compression = null;
+
   }
-
 }

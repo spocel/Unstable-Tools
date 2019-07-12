@@ -1,7 +1,5 @@
 package com.tfar.unstabletools.tools;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -48,7 +46,6 @@ public class ItemUnstableHoe extends HoeItem {
     REVERSE_HOE_LOOKUP.put(Blocks.GRASS_PATH, Blocks.GRASS_BLOCK.getDefaultState());
     REVERSE_HOE_LOOKUP.put(Blocks.DIRT, Blocks.GRASS_BLOCK.getDefaultState());
     REVERSE_HOE_LOOKUP.put(Blocks.DEAD_BUSH, Blocks.OAK_SAPLING.getDefaultState());
-
   }
 
   /**

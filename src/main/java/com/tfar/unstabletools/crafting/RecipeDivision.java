@@ -1,6 +1,5 @@
 package com.tfar.unstabletools.crafting;
 
-import com.tfar.unstabletools.ObjectHolders;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.WorkbenchContainer;
@@ -14,6 +13,8 @@ import net.minecraftforge.common.Tags;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
 import javax.annotation.Nonnull;
+
+import static com.tfar.unstabletools.UnstableTools.ObjectHolders.*;
 
 public class RecipeDivision extends SpecialRecipe {
   public RecipeDivision(ResourceLocation idIn) {
@@ -49,7 +50,7 @@ public class RecipeDivision extends SpecialRecipe {
 
     ItemStack divisionSign = inv.getStackInSlot(4);
     boolean stable = divisionSign.getOrCreateTag().getBoolean("stable");
-    if (stable)return new ItemStack(ObjectHolders.unstableIngot);
+    if (stable)return new ItemStack(unstable_ingot);
     boolean activated = divisionSign.getOrCreateTag().getBoolean("activated");
     if (!activated)return ItemStack.EMPTY;
     Container container = ObfuscationReflectionHelper.getPrivateValue(CraftingInventory.class,inv,"field_70465_c");
@@ -57,11 +58,15 @@ public class RecipeDivision extends SpecialRecipe {
     CompoundNBT nbt = new CompoundNBT();
     nbt.putInt("timer",200);
     container.detectAndSendChanges();
-    ItemStack output = new ItemStack(ObjectHolders.unstableIngot);
+    ItemStack output = new ItemStack(unstable_ingot);
     output.getOrCreateTag().putInt("timer",200);
     return output;
   }
 
+  @Override
+  public ItemStack getRecipeOutput() {
+    return new ItemStack(unstable_ingot);
+  }
 
   @Override
   public boolean canFit(int width, int height) {
@@ -71,7 +76,7 @@ public class RecipeDivision extends SpecialRecipe {
   @Nonnull
   @Override
   public IRecipeSerializer<?> getSerializer() {
-    return ObjectHolders.RECIPE;
+    return compression;
   }
 }
 

@@ -29,9 +29,7 @@ public class ItemUnstableShears extends ShearsItem {
   @Nonnull
   @Override
   public Set<ToolType> getToolTypes(ItemStack stack) {
-    Set<ToolType> types = new HashSet<>();
-    types.add(ToolType.PICKAXE);
-    return types;
+    return ItemUnstablePickaxe.types;
   }
 
   @Override

@@ -17,12 +17,8 @@ public class BlockUnstableBlock extends Block {
   }
 
   @Override
-  @OnlyIn(Dist.CLIENT)
   @Nonnull
   public BlockRenderLayer getRenderLayer() {
     return BlockRenderLayer.CUTOUT;
   }
-
-
-
 }

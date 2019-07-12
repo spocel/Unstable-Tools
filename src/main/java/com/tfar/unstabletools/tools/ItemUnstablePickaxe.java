@@ -1,5 +1,6 @@
 package com.tfar.unstabletools.tools;
 
+import com.google.common.collect.Sets;
 import net.minecraft.item.IItemTier;
 import net.minecraft.item.PickaxeItem;
 import net.minecraft.item.ItemStack;
@@ -14,11 +15,11 @@ public class ItemUnstablePickaxe extends PickaxeItem {
     super(material,attackDamage,attackSpeed,properties);
   }
 
+  static final Set<ToolType> types = Sets.newHashSet(ToolType.PICKAXE);
+
   @Nonnull
   @Override
   public Set<ToolType> getToolTypes(ItemStack stack) {
-    Set<ToolType> types = new HashSet<>();
-    types.add(ToolType.PICKAXE);
     return types;
   }
 

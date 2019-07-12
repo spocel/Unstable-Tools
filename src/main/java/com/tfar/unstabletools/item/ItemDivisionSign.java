@@ -44,7 +44,6 @@ public class ItemDivisionSign extends Item implements IDivisionItem,IItemColored
   }
 
   @Override
-  @OnlyIn(Dist.CLIENT)
   public boolean hasEffect(ItemStack stack) {
     return stack.hasTag() && stack.getTag().getBoolean("activated");
   }
