@@ -203,7 +203,7 @@ public class UnstableTools {
 
     public static final Item division_sign = null;
 
-    public static Item unstable_pickaxe = null;
+    public static final Item unstable_pickaxe = null;
 
     public static final IRecipeSerializer<?> compression = null;
 
