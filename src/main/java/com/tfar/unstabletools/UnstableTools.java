@@ -1,7 +1,6 @@
 package com.tfar.unstabletools;
 
 import com.tfar.unstabletools.armor.ItemUnstableArmor;
-import com.tfar.unstabletools.block.BlockUnstableBlock;
 import com.tfar.unstabletools.crafting.RecipeDivision;
 import com.tfar.unstabletools.item.ItemDivisionSign;
 import com.tfar.unstabletools.item.ItemUnstableIngot;
@@ -17,6 +16,7 @@ import net.minecraft.item.*;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.SpecialRecipeSerializer;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraftforge.common.util.FakePlayer;
@@ -122,8 +122,6 @@ public class UnstableTools {
   public static final IArmorMaterial UNSTABLE_ARMOR = new UnstableArmorMaterial();
   public static final List<Item> MOD_ITEMS = new ArrayList<>();
 
-  public static Logger logger;
-
   public static ItemGroup creativeTab = new ItemGroup(MODID) {
     @Override
     public ItemStack createIcon() {
@@ -136,7 +134,15 @@ public class UnstableTools {
     @SubscribeEvent
     public static void registerBlock(RegistryEvent.Register<Block> event) {
       IForgeRegistry<Block> registry = event.getRegistry();
-      registerBlock(new BlockUnstableBlock(Block.Properties.create(Material.IRON).hardnessAndResistance(5, 6000)), "unstable_block", registry);
+      registerBlock(new Block(Block.Properties.create(Material.IRON).hardnessAndResistance(5, 6000)) {
+
+        @Nonnull
+        @Override
+        public BlockRenderLayer getRenderLayer() {
+          return BlockRenderLayer.CUTOUT;
+        }
+        }
+              , "unstable_block", registry);
     }
 
     @SubscribeEvent
@@ -148,7 +154,7 @@ public class UnstableTools {
       registerItem(new ItemUnstableIngot(properties), "unstable_ingot", registry);
       registerItem(new ItemUnstableShears(properties), "unstable_shears", registry);
 
-      registerItem(new BlockItem(unstable_block, properties), unstable_block.getRegistryName().toString(), registry);
+      registerItem(new BlockItem(unstable_block, properties), unstable_block.getRegistryName().getPath(), registry);
 
       registerItem(new ItemUnstableAxe(UNSTABLE, properties), "unstable_axe", registry);
       registerItem(new ItemUnstableSpade(UNSTABLE, 3, -1.5f, properties), "unstable_spade", registry);
@@ -168,8 +174,7 @@ public class UnstableTools {
 
       IForgeRegistry<IRecipeSerializer<?>> registry = event.getRegistry();
       SpecialRecipeSerializer<RecipeDivision> obj = new SpecialRecipeSerializer<>(RecipeDivision::new);
-      obj.setRegistryName("division");
-      registry.register(obj);
+      registry.register(obj.setRegistryName("division"));
     }
 
     private static void registerBlock(Block block, String name, IForgeRegistry<Block> registry) {
@@ -205,7 +210,7 @@ public class UnstableTools {
 
     public static final Item unstable_pickaxe = null;
 
-    public static final IRecipeSerializer<?> compression = null;
+    public static final IRecipeSerializer<?> division = null;
 
   }
 }

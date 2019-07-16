@@ -47,6 +47,7 @@ public class ItemUnstableShears extends ShearsItem {
     return true;
   }
 
+  //doesn't work
   @SubscribeEvent
   @SuppressWarnings("unused")
   public static void itemDrops(BlockEvent.HarvestDropsEvent e) {

@@ -3,6 +3,7 @@ package com.tfar.unstabletools.item;
 import com.tfar.unstabletools.crafting.IDivisionItem;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -19,6 +20,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.ServerWorld;
 import net.minecraft.world.World;
@@ -65,12 +67,6 @@ public class ItemDivisionSign extends Item implements IDivisionItem,IItemColored
     return stack;
   }
 
-  private static CompoundNBT fixNBT() {
-    CompoundNBT nbt = new CompoundNBT();
-    nbt.putInt("d", 256);
-    return nbt;
-  }
-
   @Override
   @Nonnull
   public ActionResultType onItemUse(ItemUseContext ctx) {
@@ -110,7 +106,7 @@ public class ItemDivisionSign extends Item implements IDivisionItem,IItemColored
   @Override
 @OnlyIn(Dist.CLIENT)
   public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-    if (worldIn == null) return;
+    if (Screen.hasShiftDown())tooltip.add(new StringTextComponent("Drops from Wither").applyTextStyle(TextFormatting.AQUA));
     if (!stack.hasTag()) return;
     boolean stable = stack.getTag().getBoolean("stable");
     if (stable){tooltip.add(new StringTextComponent("Stable"));return;}

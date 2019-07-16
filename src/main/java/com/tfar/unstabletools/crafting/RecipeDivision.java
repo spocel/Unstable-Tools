@@ -76,7 +76,7 @@ public class RecipeDivision extends SpecialRecipe {
   @Nonnull
   @Override
   public IRecipeSerializer<?> getSerializer() {
-    return compression;
+    return division;
   }
 }
 

@@ -1,5 +1,6 @@
 package com.tfar.unstabletools.item;
 
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -12,6 +13,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -38,6 +40,10 @@ public class ItemUnstableIngot extends Item implements IItemColored {
   @Override
 @OnlyIn(Dist.CLIENT)
   public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    if (Screen.hasShiftDown()){
+      tooltip.add(new StringTextComponent("The product of dividing iron by diamond,").applyTextStyle(TextFormatting.AQUA));
+      tooltip.add(new StringTextComponent("handle with care").applyTextStyle(TextFormatting.AQUA));
+    }
     if (!stack.hasTag()) {
       tooltip.add(new StringTextComponent("'Stable'"));
       return;

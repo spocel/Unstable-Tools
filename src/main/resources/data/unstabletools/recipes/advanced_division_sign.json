@@ -19,7 +19,7 @@
       "item": "minecraft:totem_of_undying"
     },
     "E": {
-      "item": "unstabletools:unstable_block"
+      "tag": "forge:storage_blocks/unstable"
     },
     "F": {
       "item": "minecraft:elytra"
