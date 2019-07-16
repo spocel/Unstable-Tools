@@ -1,5 +1,5 @@
 item.unstabletools:unstable_ingot.name=Unstable Ingot
-item.unstabletools:unstable_block.name=Unstable Block
+tile.unstabletools:unstable_block.name=Unstable Block
 
 
 item.unstabletools:unstable_pickaxe.name=Unstable Pickaxe

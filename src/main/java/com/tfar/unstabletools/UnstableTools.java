@@ -44,7 +44,7 @@ import java.util.List;
 public class UnstableTools {
   public static final String MODID = "unstabletools";
   public static final String NAME = "Unstable Tools";
-  public static final String VERSION = "1.0";
+  public static final String VERSION = "@VERSION@";
 
   public static final Item.ToolMaterial UNSTABLE = EnumHelper.addToolMaterial("UNSTABLE", 4, Short.MAX_VALUE, 8, 4, 25);
   public static final ItemArmor.ArmorMaterial UNSTABLE_ARMOR = EnumHelper.addArmorMaterial(MODID + ":unstable_armor", MODID + ":unstable", Short.MAX_VALUE, new int[]{4, 7, 9, 4}, 25, SoundEvents.ITEM_ARMOR_EQUIP_GENERIC, 5);
@@ -72,14 +72,6 @@ public class UnstableTools {
     OreDictionary.registerOre("blockUnstable", ObjectHolders.unstableBlock);
 
 
-
-  }
-
-  @SubscribeEvent
-  public static void colors(ColorHandlerEvent.Item e){
-    ItemColors itemColors = e.getItemColors();
-    itemColors.registerItemColorHandler(ObjectHolders.unstableIngot::getColor,(Item)ObjectHolders.unstableIngot);
-    itemColors.registerItemColorHandler(ObjectHolders.divisionSign::getColor,(Item)ObjectHolders.divisionSign);
 
   }
 
