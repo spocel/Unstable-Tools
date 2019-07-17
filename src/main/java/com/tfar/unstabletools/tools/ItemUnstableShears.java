@@ -1,5 +1,6 @@
 package com.tfar.unstabletools.tools;
 
+import com.tfar.unstabletools.UnstableTools;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -14,7 +15,7 @@ import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 
-@Mod.EventBusSubscriber
+//@Mod.EventBusSubscriber(modid = UnstableTools.MODID)
 public class ItemUnstableShears extends ShearsItem {
 
   public ItemUnstableShears(Properties builder) {
@@ -48,11 +49,11 @@ public class ItemUnstableShears extends ShearsItem {
   }
 
   //doesn't work
-  @SubscribeEvent
+  /*@SubscribeEvent
   @SuppressWarnings("unused")
   public static void itemDrops(BlockEvent.HarvestDropsEvent e) {
     PlayerEntity player = e.getHarvester();
     if (player != null && player.getHeldItemMainhand().getItem() instanceof ItemUnstableShears)
       e.getDrops().removeIf(player::addItemStackToInventory);
-  }
+  }*/
 }

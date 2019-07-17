@@ -12,13 +12,11 @@ import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
-import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nonnull;
 import java.util.HashSet;
 import java.util.Set;
 
-@Mod.EventBusSubscriber
 public class ItemUnstableAxe extends AxeItem {
 
   public ItemUnstableAxe(IItemTier materialIn, float damage, float attackSpeed, Properties properties) {

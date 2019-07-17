@@ -12,12 +12,12 @@ import net.minecraftforge.fml.common.Mod;
 import static com.tfar.unstabletools.UnstableTools.ObjectHolders.division_sign;
 import static com.tfar.unstabletools.UnstableTools.ObjectHolders.unstable_ingot;
 
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+//@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT,modid = UnstableTools.MODID)
 public class Client {
-  @SubscribeEvent
+/*  @SubscribeEvent
   public static void colors(ColorHandlerEvent.Item e) {
     ItemColors itemColors = e.getItemColors();
     itemColors.register(((ItemUnstableIngot)unstable_ingot)::getColor, (Item) unstable_ingot);
     itemColors.register(((ItemDivisionSign)division_sign)::getColor, (Item) division_sign);
-  }
+  }*/
 }
