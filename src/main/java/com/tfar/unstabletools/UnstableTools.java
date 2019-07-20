@@ -6,6 +6,7 @@ import com.tfar.unstabletools.item.ItemDivisionSign;
 import com.tfar.unstabletools.item.ItemUnstableIngot;
 import com.tfar.unstabletools.tools.*;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.boss.WitherEntity;
@@ -17,8 +18,11 @@ import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.SpecialRecipeSerializer;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.Direction;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
@@ -26,11 +30,10 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.ObjectHolder;
-import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import static com.tfar.unstabletools.UnstableTools.ObjectHolders.unstable_block;
 
@@ -118,9 +121,8 @@ public class UnstableTools {
     }
   }
 
-
   public static final IArmorMaterial UNSTABLE_ARMOR = new UnstableArmorMaterial();
-  public static final List<Item> MOD_ITEMS = new ArrayList<>();
+  public static final Set<Item> MOD_ITEMS = new HashSet<>();
 
   public static ItemGroup creativeTab = new ItemGroup(MODID) {
     @Override
@@ -141,7 +143,19 @@ public class UnstableTools {
         public BlockRenderLayer getRenderLayer() {
           return BlockRenderLayer.CUTOUT;
         }
-        }
+
+                      @Override
+                      @OnlyIn(Dist.CLIENT)
+                      public boolean isSideInvisible(BlockState state, BlockState adjacentBlockState, Direction side) {
+                        return adjacentBlockState.getBlock() == this
+                                || !adjacentBlockState.getBlock().isAir(adjacentBlockState,null,null);
+                      }
+
+                      @Override
+                      public boolean isSolid(BlockState state) {
+                        return true;
+                      }
+                    }
               , "unstable_block", registry);
     }
 
