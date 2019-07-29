@@ -1,5 +1,6 @@
 package com.tfar.unstabletools.item;
 
+import com.tfar.unstabletools.UnstableTools;
 import com.tfar.unstabletools.crafting.IDivisionItem;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -11,12 +12,14 @@ import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -33,8 +36,9 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
+
 @Mod.EventBusSubscriber
-public class ItemDivisionSign extends Item implements IDivisionItem,IItemColored {
+public class ItemDivisionSign extends Item implements IDivisionItem, IItemColored {
 
   public ItemDivisionSign(Properties properties) {
     super(properties);
@@ -45,10 +49,9 @@ public class ItemDivisionSign extends Item implements IDivisionItem,IItemColored
     return true;
   }
 
-  @Override
-  public boolean hasEffect(ItemStack stack) {
-    return stack.hasTag() && stack.getTag().getBoolean("activated");
-  }
+  public static final String active = "active";
+  private static final StringTextComponent l = new StringTextComponent(" (");
+  private static final StringTextComponent r = new StringTextComponent(")");
 
   @Override
   @Nonnull
@@ -58,13 +61,40 @@ public class ItemDivisionSign extends Item implements IDivisionItem,IItemColored
 
   public static ItemStack damage(ItemStack stack) {
     CompoundNBT nbt = stack.getTag();
-    boolean stable = stack.getTag().getBoolean("stable");
-    if (stable)return stack;
+    boolean stable = nbt.getBoolean("stable");
+    if (stable) return stack;
     int d = nbt.getInt("d");
-    d--;
-    nbt.putInt("d", d);
+    nbt.putInt("d", --d);
     stack.setTag(nbt);
     return stack;
+  }
+
+  @Override
+  public double getDurabilityForDisplay(ItemStack stack) {
+    return stack.getOrCreateTag().getBoolean("stable") ? 0 : (256 - stack.getOrCreateTag().getInt("d")) / 256d;
+  }
+
+  @Override
+  public boolean showDurabilityBar(ItemStack stack) {
+    return stack.getOrCreateTag().getBoolean(active) && !stack.getOrCreateTag().getBoolean("stable") && stack.getOrCreateTag().getInt("d") != 256;
+  }
+
+  @Override
+  public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
+    super.fillItemGroup(group, items);
+    CompoundNBT nbt0 = new CompoundNBT();
+    CompoundNBT nbt1 = nbt0.copy();
+    nbt0.putInt("d", 256);
+    nbt0.putBoolean(active, true);
+    nbt1.putBoolean("stable", true);
+    ItemStack stack0 = new ItemStack(this);
+    ItemStack stack1 = stack0.copy();
+    stack0.setTag(nbt0);
+    stack1.setTag(nbt1);
+    if (group == ItemGroup.SEARCH || group == UnstableTools.creativeTab) {
+      items.add(stack0);
+      items.add(stack1);
+    }
   }
 
   @Override
@@ -74,81 +104,101 @@ public class ItemDivisionSign extends Item implements IDivisionItem,IItemColored
     Hand hand = ctx.getHand();
     World world = player.world;
     BlockPos pos = ctx.getPos();
-    if (hand == Hand.OFF_HAND || world.isRemote)return ActionResultType.FAIL;
+    if (hand == Hand.OFF_HAND || world.isRemote) return ActionResultType.FAIL;
     Block block = world.getBlockState(pos).getBlock();
     if (block != Blocks.ENCHANTING_TABLE) return ActionResultType.FAIL;
     long time = world.getWorldInfo().getDayTime() % 24000;
 
     boolean correctTime = false;
     if (time <= 17500) player.sendMessage(new TranslationTextComponent("unstabletools.early"));
-    else if (time <= 18500) {player.sendMessage(new TranslationTextComponent("unstabletools.ontime"));correctTime=true;}
-    else player.sendMessage(new TranslationTextComponent("unstabletools.late"));
+    else if (time <= 18500) {
+      player.sendMessage(new TranslationTextComponent("unstabletools.ontime"));
+      correctTime = true;
+    } else player.sendMessage(new TranslationTextComponent("unstabletools.late"));
     boolean circle = true;
     for (int i = -1; i < 2; i++) {
       for (int j = -1; j < 2; j++) {
         if (i == 0 && j == 0) continue;
         BlockPos pos1 = new BlockPos(pos.getX() + i, pos.getY(), pos.getZ() + j);
-        if(world.getBlockState(pos1).getBlock() != Blocks.REDSTONE_WIRE)circle = false;
+        if (world.getBlockState(pos1).getBlock() != Blocks.REDSTONE_WIRE) circle = false;
       }
     }
 
-    if (!circle)player.sendMessage(new TranslationTextComponent("unstabletools.incomplete"));
+    if (!circle) player.sendMessage(new TranslationTextComponent("unstabletools.incomplete"));
     boolean skyVisible = world.canBlockSeeSky(pos.up());
-    if (!skyVisible)player.sendMessage(new TranslationTextComponent("unstabletools.nosky"));
+    if (!skyVisible) player.sendMessage(new TranslationTextComponent("unstabletools.nosky"));
 
-    if(correctTime && circle && skyVisible)player.sendMessage(new TranslationTextComponent("unstabletools.ready"));
+    if (correctTime && circle && skyVisible) player.sendMessage(new TranslationTextComponent("unstabletools.ready"));
 
     return ActionResultType.PASS;
   }
 
-
+  @Nonnull
+  @Override
+  public ITextComponent getDisplayName(@Nonnull ItemStack stack) {
+    if (!stack.hasTag() || !stack.getTag().getBoolean("active") && !stack.getTag().getBoolean("stable"))
+    return new TranslationTextComponent(this.getTranslationKey())
+            .appendSibling(l)
+                    .appendSibling(new TranslationTextComponent("unstabletools.inactive"))
+                    .appendSibling(r);
+    else if (stack.getTag().getBoolean("stable"))
+      return new TranslationTextComponent(this.getTranslationKey())
+              .appendSibling(l)
+                      .appendSibling(new TranslationTextComponent("unstabletools.stable"))
+                      .appendSibling(r);
+    else return new TranslationTextComponent(this.getTranslationKey())
+              .appendSibling(l)
+                      .appendSibling(new TranslationTextComponent("unstabletools.active"))
+                      .appendSibling(r);
+  }
 
   @Override
-@OnlyIn(Dist.CLIENT)
+  @OnlyIn(Dist.CLIENT)
   public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-    if (Screen.hasShiftDown())tooltip.add(new StringTextComponent("Drops from Wither").applyTextStyle(TextFormatting.AQUA));
+    if (Screen.hasShiftDown())
+      tooltip.add(new StringTextComponent("Drops from Wither").applyTextStyle(TextFormatting.AQUA));
     if (!stack.hasTag()) return;
     boolean stable = stack.getTag().getBoolean("stable");
-    if (stable){tooltip.add(new StringTextComponent("Stable"));return;}
-    boolean activated = stack.getTag().getBoolean("activated");
-    tooltip.add(new StringTextComponent("Activated: " + activated));
+    if (stable) return;
+    boolean activated = stack.getTag().getBoolean(active);
     if (!activated) return;
     tooltip.add(new StringTextComponent("Uses Left: " + stack.getTag().getInt("d")));
   }
 
   @SubscribeEvent
-  public static void onSacrifice(LivingDeathEvent e){
-    if (!(e.getSource().getTrueSource() instanceof PlayerEntity))return;
-    PlayerEntity player = (PlayerEntity)e.getSource().getTrueSource();
+  public static void onSacrifice(LivingDeathEvent e) {
+    if (!(e.getSource().getTrueSource() instanceof PlayerEntity)) return;
+    PlayerEntity player = (PlayerEntity) e.getSource().getTrueSource();
     LivingEntity sacrifice = e.getEntityLiving();
     World world = sacrifice.world;
     BlockPos pos = sacrifice.getPosition();
-    if (!world.canBlockSeeSky(pos))return;
+    if (!world.canBlockSeeSky(pos)) return;
     Block block = world.getBlockState(pos).getBlock();
-    if (block != Blocks.ENCHANTING_TABLE)return;
+    if (block != Blocks.ENCHANTING_TABLE) return;
 
     for (int i = -1; i < 2; i++) {
       for (int j = -1; j < 2; j++) {
         if (i == 0 && j == 0) continue;
         BlockPos pos1 = new BlockPos(pos.getX() + i, pos.getY(), pos.getZ() + j);
-        if(world.getBlockState(pos1).getBlock() != Blocks.REDSTONE_WIRE)return;
+        if (world.getBlockState(pos1).getBlock() != Blocks.REDSTONE_WIRE) return;
       }
     }
 
     long time = world.getWorldInfo().getDayTime() % 24000;
-    if (time <= 17500 || time > 18500)return;
+    if (time <= 17500 || time > 18500) return;
 
-    for (ItemStack slot : player.inventory.mainInventory){
-      if (!(slot.getItem() instanceof IDivisionItem))continue;
-      slot.getOrCreateTag().putBoolean("activated",true);
-      slot.getOrCreateTag().putInt("d",256);
+    for (ItemStack slot : player.inventory.mainInventory) {
+      if (!(slot.getItem() instanceof IDivisionItem)) continue;
+      slot.getOrCreateTag().putBoolean(active, true);
+      slot.getOrCreateTag().putInt("d", 256);
     }
     if (!world.isRemote)
-      ((ServerWorld)world).addLightningBolt(new LightningBoltEntity(sacrifice.world, sacrifice.posX, sacrifice.posY, sacrifice.posZ, false));
+      ((ServerWorld) world).addLightningBolt(new LightningBoltEntity(sacrifice.world, sacrifice.posX, sacrifice.posY, sacrifice.posZ, false));
   }
 
   @Override
   public int getColor(ItemStack stack, int tintIndex) {
-    return (!stack.hasTag()) ? 0xee0000 : (stack.getTag().getBoolean("stable")) ? 0x50dd00 : 0xee0000;
+    return (!stack.hasTag()) ? 0xee0000 : stack.getTag().getBoolean("stable") ? 0x50dd00 :
+            stack.getTag().getBoolean(active) ? 0xeedd00 : 0xee0000;
   }
 }

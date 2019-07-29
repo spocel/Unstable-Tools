@@ -2,9 +2,17 @@ package com.tfar.unstabletools.tools;
 
 import com.tfar.unstabletools.UnstableTools;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ShearsItem;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -13,6 +21,7 @@ import net.minecraftforge.fml.common.Mod;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 //@Mod.EventBusSubscriber(modid = UnstableTools.MODID)
@@ -31,6 +40,15 @@ public class ItemUnstableShears extends ShearsItem {
   @Override
   public Set<ToolType> getToolTypes(ItemStack stack) {
     return ItemUnstablePickaxe.types;
+  }
+
+  @Override
+  @OnlyIn(Dist.CLIENT)
+  public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    if (Screen.hasShiftDown()){
+      tooltip.add(new StringTextComponent("Normally this would teleport dropped items into the inventory").applyTextStyle(TextFormatting.AQUA));
+      tooltip.add(new StringTextComponent("But that won't work until https://github.com/MinecraftForge/MinecraftForge/pull/5871 gets merged").applyTextStyle(TextFormatting.AQUA));
+    }
   }
 
   @Override

@@ -1,5 +1,7 @@
 package com.tfar.unstabletools.crafting;
 
+import com.google.common.collect.Sets;
+import com.tfar.unstabletools.item.ItemDivisionSign;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.WorkbenchContainer;
@@ -14,12 +16,18 @@ import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
 import javax.annotation.Nonnull;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import static com.tfar.unstabletools.UnstableTools.ObjectHolders.*;
 
 public class RecipeDivision extends SpecialRecipe {
   public RecipeDivision(ResourceLocation idIn) {
     super(idIn);
   }
+
+  //fast workbench users will thank me
+  public static final Set<Class<?>> classes = new HashSet<>(Sets.<Class<?>>newHashSet(WorkbenchContainer.class));
 
   /**
    * Used to check if a recipe matches current crafting inventory
@@ -51,18 +59,18 @@ public class RecipeDivision extends SpecialRecipe {
     ItemStack divisionSign = inv.getStackInSlot(4);
     boolean stable = divisionSign.getOrCreateTag().getBoolean("stable");
     if (stable)return new ItemStack(unstable_ingot);
-    boolean activated = divisionSign.getOrCreateTag().getBoolean("activated");
+    boolean activated = divisionSign.getOrCreateTag().getBoolean(ItemDivisionSign.active);
     if (!activated)return ItemStack.EMPTY;
     Container container = ObfuscationReflectionHelper.getPrivateValue(CraftingInventory.class,inv,"field_70465_c");
-    if (!WorkbenchContainer.class.equals(container.getClass()))return ItemStack.EMPTY;
+    if (!classes.contains(container.getClass()))return ItemStack.EMPTY;
     CompoundNBT nbt = new CompoundNBT();
     nbt.putInt("timer",200);
-    container.detectAndSendChanges();
     ItemStack output = new ItemStack(unstable_ingot);
-    output.getOrCreateTag().putInt("timer",200);
+    output.setTag(nbt);
     return output;
   }
 
+  @Nonnull
   @Override
   public ItemStack getRecipeOutput() {
     return new ItemStack(unstable_ingot);

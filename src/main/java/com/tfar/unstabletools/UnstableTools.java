@@ -138,17 +138,17 @@ public class UnstableTools {
       IForgeRegistry<Block> registry = event.getRegistry();
       registerBlock(new Block(Block.Properties.create(Material.IRON).hardnessAndResistance(5, 6000)) {
 
-        @Nonnull
-        @Override
-        public BlockRenderLayer getRenderLayer() {
-          return BlockRenderLayer.CUTOUT;
-        }
+                      @Nonnull
+                      @Override
+                      public BlockRenderLayer getRenderLayer() {
+                        return BlockRenderLayer.CUTOUT;
+                      }
 
                       @Override
                       @OnlyIn(Dist.CLIENT)
                       public boolean isSideInvisible(BlockState state, BlockState adjacentBlockState, Direction side) {
                         return adjacentBlockState.getBlock() == this
-                                || !adjacentBlockState.getBlock().isAir(adjacentBlockState,null,null);
+                                || !adjacentBlockState.getBlock().isAir(adjacentBlockState, null, null);
                       }
 
                       @Override
@@ -202,14 +202,18 @@ public class UnstableTools {
     }
   }
 
-  @SubscribeEvent
-  public static void onEvent(LivingDropsEvent event) {
-    LivingEntity entity = event.getEntityLiving();
-    if (entity instanceof WitherEntity && (event.getSource().getTrueSource() instanceof PlayerEntity) && !(event.getSource().getTrueSource() instanceof FakePlayer)) {
+  @Mod.EventBusSubscriber(modid = MODID)
+  public static class DropHandler {
+    @SubscribeEvent
+    public static void onEvent(LivingDropsEvent event) {
+      LivingEntity entity = event.getEntityLiving();
+      if (entity instanceof WitherEntity && (event.getSource().getTrueSource() instanceof PlayerEntity)
+              && !(event.getSource().getTrueSource() instanceof FakePlayer)) {
 
-      ItemStack itemStackToDrop = new ItemStack(ObjectHolders.division_sign);
-      event.getDrops().add(new ItemEntity(entity.world, entity.posX,
-              entity.posY, entity.posZ, itemStackToDrop));
+        ItemStack itemStackToDrop = new ItemStack(ObjectHolders.division_sign);
+        event.getDrops().add(new ItemEntity(entity.world, entity.posX,
+                entity.posY, entity.posZ, itemStackToDrop));
+      }
     }
   }
 

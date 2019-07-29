@@ -1,5 +1,6 @@
 package com.tfar.unstabletools.item;
 
+import com.tfar.unstabletools.crafting.RecipeDivision;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.item.ItemEntity;
@@ -7,6 +8,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.CraftingResultSlot;
 import net.minecraft.inventory.container.Slot;
+import net.minecraft.inventory.container.WorkbenchContainer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -25,6 +27,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import javax.annotation.Nullable;
+import java.util.Iterator;
 import java.util.List;
 
 @Mod.EventBusSubscriber
@@ -62,24 +65,29 @@ public class ItemUnstableIngot extends Item implements IItemColored {
 
     if (e.phase == TickEvent.Phase.START) return;
 
-    World world = e.player.world;
     Container container = e.player.openContainer;
+    if (!RecipeDivision.classes.contains(container.getClass()))return;
+
+    World world = e.player.world;
+
+    if (world.isRemote)return;
     boolean explode = false;
 
-    for (Slot slot : container.inventorySlots) {
+    List<Slot> inventorySlots = container.inventorySlots;
+    for (Slot slot : inventorySlots) {
       ItemStack stack = slot.getStack();
       if (!(stack.getItem() instanceof ItemUnstableIngot) || !stack.hasTag() || slot instanceof CraftingResultSlot)
         continue;
       int timer = stack.getTag().getInt("timer");
       if (timer == 0) {
-        stack.shrink(1);
+        slot.putStack(ItemStack.EMPTY);
         explode = true;
         continue;
       }
       stack.getTag().putInt("timer", --timer);
     }
 
-    container.detectAndSendChanges();
+    //container.detectAndSendChanges();
 
     if (!explode) return;
     PlayerEntity p = e.player;
