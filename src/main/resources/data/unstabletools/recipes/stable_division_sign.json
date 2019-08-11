@@ -32,9 +32,6 @@
     }
   },
   "result": {
-    "item": "unstabletools:division_sign",
-    "nbt": {
-      "stable": true
-    }
+    "item": "unstabletools:stable_division_sign"
   }
 }

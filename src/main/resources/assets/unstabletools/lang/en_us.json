@@ -10,7 +10,9 @@
   "item.unstabletools.unstable_hoe": "Unstable Hoe",
   "item.unstabletools.unstable_shears": "Unstable Shears",
 
+  "item.unstabletools.inactive_division_sign": "Inactive Division Sign",
   "item.unstabletools.division_sign": "Division Sign",
+  "item.unstabletools.stable_division_sign": "Stable Division Sign",
 
   "item.unstabletools.unstable_helmet": "Unstable Helmet",
   "item.unstabletools.unstable_chestplate": "Unstable Chestplate",

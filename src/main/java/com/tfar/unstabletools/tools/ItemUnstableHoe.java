@@ -66,12 +66,9 @@ public class ItemUnstableHoe extends HoeItem {
         if (!world.isRemote) {
           world.setBlockState(blockpos, blockstate, 11);
           if (playerentity != null) {
-            context.getItem().damageItem(1, playerentity, (p_220043_1_) -> {
-              p_220043_1_.sendBreakAnimation(context.getHand());
-            });
+            context.getItem().damageItem(1, playerentity, (p_220043_1_) -> p_220043_1_.sendBreakAnimation(context.getHand()));
           }
         }
-
         return ActionResultType.SUCCESS;
       }
     }
@@ -79,7 +76,7 @@ public class ItemUnstableHoe extends HoeItem {
   }
 
   /**
-   * Current implementations of this method in child classes do not use the entry argument beside ev. They just raise
+   * Current implementations of this method in child types do not use the entry argument beside ev. They just raise
    * the damage on the stack.
    */
   public boolean hitEntity(ItemStack stack, LivingEntity target, LivingEntity attacker) {

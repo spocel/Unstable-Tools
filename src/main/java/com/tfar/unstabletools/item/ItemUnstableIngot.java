@@ -1,18 +1,20 @@
 package com.tfar.unstabletools.item;
 
+import com.tfar.unstabletools.crafting.Config;
 import com.tfar.unstabletools.crafting.RecipeDivision;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.inventory.container.CraftingResultSlot;
 import net.minecraft.inventory.container.Slot;
-import net.minecraft.inventory.container.WorkbenchContainer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -20,21 +22,21 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
 import javax.annotation.Nullable;
-import java.util.Iterator;
 import java.util.List;
 
 @Mod.EventBusSubscriber
 public class ItemUnstableIngot extends Item implements IItemColored {
 
-  public static final DamageSource DIVIDE_BY_DIAMOND = (new DamageSource("divide_by_diamond"));
-  public static final DamageSource ESCAPE_DIVIDE_BY_DIAMOND = (new DamageSource("escape_divide_by_diamond"));
+  public static final DamageSource DIVIDE_BY_DIAMOND = (new DamageSource("divide_by_diamond").setDamageBypassesArmor());
+  public static final DamageSource ESCAPE_DIVIDE_BY_DIAMOND = (new DamageSource("escape_divide_by_diamond").setDamageBypassesArmor());
 
   public ItemUnstableIngot(Properties properties) {
     super(properties);
@@ -66,7 +68,8 @@ public class ItemUnstableIngot extends Item implements IItemColored {
     if (e.phase == TickEvent.Phase.START) return;
 
     Container container = e.player.openContainer;
-    if (!RecipeDivision.classes.contains(container.getClass()))return;
+    ContainerType<?> type = ObfuscationReflectionHelper.getPrivateValue(Container.class,container,"field_216965_e");
+    if (type == null || !Config.ServerConfig.allowed_containers.get().contains(type.getRegistryName().toString()))return;
 
     World world = e.player.world;
 
@@ -87,8 +90,6 @@ public class ItemUnstableIngot extends Item implements IItemColored {
       stack.getTag().putInt("timer", --timer);
     }
 
-    //container.detectAndSendChanges();
-
     if (!explode) return;
     PlayerEntity p = e.player;
     world.createExplosion(null, p.posX, p.posY, p.posZ, 1, Explosion.Mode.NONE);
@@ -97,13 +98,13 @@ public class ItemUnstableIngot extends Item implements IItemColored {
 
   @SubscribeEvent
   public static void onContainerClose(PlayerContainerEvent.Close e) {
-    PlayerEntity p = e.getEntityPlayer();
+    PlayerEntity p = e.getPlayer();
     Container c = e.getContainer();
     boolean explode = false;
     for (Slot slot : c.inventorySlots) {
       ItemStack stack = slot.getStack();
       if (!checkExplosion(stack) || slot instanceof CraftingResultSlot) continue;
-      stack.shrink(1);
+      slot.putStack(ItemStack.EMPTY);
       explode = true;
     }
     if (!explode) return;

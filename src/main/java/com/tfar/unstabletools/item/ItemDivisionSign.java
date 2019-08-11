@@ -1,23 +1,18 @@
 package com.tfar.unstabletools.item;
 
-import com.tfar.unstabletools.UnstableTools;
 import com.tfar.unstabletools.crafting.IDivisionItem;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
@@ -25,8 +20,8 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.ServerWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -36,6 +31,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
+
+import static com.tfar.unstabletools.UnstableTools.ObjectHolders.*;
 
 @Mod.EventBusSubscriber
 public class ItemDivisionSign extends Item implements IDivisionItem, IItemColored {
@@ -49,9 +46,6 @@ public class ItemDivisionSign extends Item implements IDivisionItem, IItemColore
     return true;
   }
 
-  public static final String active = "active";
-  private static final StringTextComponent l = new StringTextComponent(" (");
-  private static final StringTextComponent r = new StringTextComponent(")");
 
   @Override
   @Nonnull
@@ -60,9 +54,8 @@ public class ItemDivisionSign extends Item implements IDivisionItem, IItemColore
   }
 
   public static ItemStack damage(ItemStack stack) {
+    if (stack.getItem() == stable_division_sign)return stack;
     CompoundNBT nbt = stack.getTag();
-    boolean stable = nbt.getBoolean("stable");
-    if (stable) return stack;
     int d = nbt.getInt("d");
     nbt.putInt("d", --d);
     stack.setTag(nbt);
@@ -71,30 +64,12 @@ public class ItemDivisionSign extends Item implements IDivisionItem, IItemColore
 
   @Override
   public double getDurabilityForDisplay(ItemStack stack) {
-    return stack.getOrCreateTag().getBoolean("stable") ? 0 : (256 - stack.getOrCreateTag().getInt("d")) / 256d;
+    return (256 - stack.getOrCreateTag().getInt("d")) / 256d;
   }
 
   @Override
   public boolean showDurabilityBar(ItemStack stack) {
-    return stack.getOrCreateTag().getBoolean(active) && !stack.getOrCreateTag().getBoolean("stable") && stack.getOrCreateTag().getInt("d") != 256;
-  }
-
-  @Override
-  public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
-    super.fillItemGroup(group, items);
-    CompoundNBT nbt0 = new CompoundNBT();
-    CompoundNBT nbt1 = nbt0.copy();
-    nbt0.putInt("d", 256);
-    nbt0.putBoolean(active, true);
-    nbt1.putBoolean("stable", true);
-    ItemStack stack0 = new ItemStack(this);
-    ItemStack stack1 = stack0.copy();
-    stack0.setTag(nbt0);
-    stack1.setTag(nbt1);
-    if (group == ItemGroup.SEARCH || group == UnstableTools.creativeTab) {
-      items.add(stack0);
-      items.add(stack1);
-    }
+    return stack.getItem() == division_sign;
   }
 
   @Override
@@ -133,35 +108,12 @@ public class ItemDivisionSign extends Item implements IDivisionItem, IItemColore
     return ActionResultType.PASS;
   }
 
-  @Nonnull
-  @Override
-  public ITextComponent getDisplayName(@Nonnull ItemStack stack) {
-    if (!stack.hasTag() || !stack.getTag().getBoolean("active") && !stack.getTag().getBoolean("stable"))
-    return new TranslationTextComponent(this.getTranslationKey())
-            .appendSibling(l)
-                    .appendSibling(new TranslationTextComponent("unstabletools.inactive"))
-                    .appendSibling(r);
-    else if (stack.getTag().getBoolean("stable"))
-      return new TranslationTextComponent(this.getTranslationKey())
-              .appendSibling(l)
-                      .appendSibling(new TranslationTextComponent("unstabletools.stable"))
-                      .appendSibling(r);
-    else return new TranslationTextComponent(this.getTranslationKey())
-              .appendSibling(l)
-                      .appendSibling(new TranslationTextComponent("unstabletools.active"))
-                      .appendSibling(r);
-  }
-
   @Override
   @OnlyIn(Dist.CLIENT)
   public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
     if (Screen.hasShiftDown())
       tooltip.add(new StringTextComponent("Drops from Wither").applyTextStyle(TextFormatting.AQUA));
-    if (!stack.hasTag()) return;
-    boolean stable = stack.getTag().getBoolean("stable");
-    if (stable) return;
-    boolean activated = stack.getTag().getBoolean(active);
-    if (!activated) return;
+    if (stack.getItem() != division_sign || !stack.hasTag()) return;
     tooltip.add(new StringTextComponent("Uses Left: " + stack.getTag().getInt("d")));
   }
 
@@ -187,10 +139,13 @@ public class ItemDivisionSign extends Item implements IDivisionItem, IItemColore
     long time = world.getWorldInfo().getDayTime() % 24000;
     if (time <= 17500 || time > 18500) return;
 
-    for (ItemStack slot : player.inventory.mainInventory) {
-      if (!(slot.getItem() instanceof IDivisionItem)) continue;
-      slot.getOrCreateTag().putBoolean(active, true);
-      slot.getOrCreateTag().putInt("d", 256);
+    NonNullList<ItemStack> mainInventory = player.inventory.mainInventory;
+    for (int i = 0; i < mainInventory.size(); i++) {
+      final ItemStack stack = mainInventory.get(i);
+      if (!(stack.getItem() == inactive_division_sign)) continue;
+      ItemStack newStack = new ItemStack(division_sign);
+      newStack.getOrCreateTag().putInt("d", 256);
+      mainInventory.set(i,newStack);
     }
     if (!world.isRemote)
       ((ServerWorld) world).addLightningBolt(new LightningBoltEntity(sacrifice.world, sacrifice.posX, sacrifice.posY, sacrifice.posZ, false));
@@ -198,7 +153,7 @@ public class ItemDivisionSign extends Item implements IDivisionItem, IItemColore
 
   @Override
   public int getColor(ItemStack stack, int tintIndex) {
-    return (!stack.hasTag()) ? 0xee0000 : stack.getTag().getBoolean("stable") ? 0x50dd00 :
-            stack.getTag().getBoolean(active) ? 0xeedd00 : 0xee0000;
+    return stack.getItem() == inactive_division_sign ? 0xff0000 : stack.getItem() == division_sign ? 0xeedd00 : 0x00ff00;
   }
+
 }

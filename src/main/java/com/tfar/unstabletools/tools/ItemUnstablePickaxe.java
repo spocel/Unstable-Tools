@@ -7,7 +7,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nonnull;
-import java.util.HashSet;
 import java.util.Set;
 
 public class ItemUnstablePickaxe extends PickaxeItem {

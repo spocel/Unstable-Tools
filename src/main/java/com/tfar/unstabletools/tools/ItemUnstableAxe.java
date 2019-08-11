@@ -1,20 +1,20 @@
 package com.tfar.unstabletools.tools;
 
+import com.google.common.collect.Sets;
 import net.minecraft.entity.CreatureAttribute;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.IItemTier;
-import net.minecraft.potion.Effects;
 import net.minecraft.item.AxeItem;
+import net.minecraft.item.IItemTier;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nonnull;
-import java.util.HashSet;
 import java.util.Set;
 
 public class ItemUnstableAxe extends AxeItem {
@@ -32,11 +32,11 @@ public class ItemUnstableAxe extends AxeItem {
     return 0;
   }
 
+  private static final Set<ToolType> types = Sets.newHashSet(ToolType.AXE);
+
   @Nonnull
   @Override
   public Set<ToolType> getToolTypes(ItemStack stack) {
-    Set<ToolType> types = new HashSet<>();
-    types.add(ToolType.AXE);
     return types;
   }
 
