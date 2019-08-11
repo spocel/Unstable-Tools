@@ -26,7 +26,7 @@ public class Config {
     ServerConfig(ForgeConfigSpec.Builder builder) {
       List<String> strings = new ArrayList<>();
       strings.add(ContainerType.CRAFTING.getRegistryName().toString());
-      strings.add("fastbench:fast_crafting");
+      strings.add("fastbench:fastbench");
       builder.push("general");
       allowed_containers = builder
               .comment("Allowed Container Types")
