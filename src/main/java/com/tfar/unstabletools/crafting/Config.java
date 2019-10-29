@@ -22,6 +22,7 @@ public class Config {
   public static class ServerConfig {
 
     public static ForgeConfigSpec.ConfigValue<List<String>> allowed_containers;
+    public static ForgeConfigSpec.BooleanValue cursed_earth_integration;
 
     ServerConfig(ForgeConfigSpec.Builder builder) {
       List<String> strings = new ArrayList<>();
@@ -31,7 +32,11 @@ public class Config {
       allowed_containers = builder
               .comment("Allowed Container Types")
               .translation("text.unstabletools.config.allowed_containers")
-              .define("containers", strings, o -> o instanceof String);
+              .define("containers", strings, String.class::isInstance);
+      cursed_earth_integration = builder
+              .comment("Enable integration with Cursed Earth")
+              .translation("text.unstabletools.config.cursed_earth_integration")
+              .define("cursed earth integration",true);
       builder.pop();
     }
   }

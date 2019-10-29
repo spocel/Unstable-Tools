@@ -14,12 +14,12 @@ public class ItemUnstablePickaxe extends PickaxeItem {
     super(material,attackDamage,attackSpeed,properties);
   }
 
-  static final Set<ToolType> types = Sets.newHashSet(ToolType.PICKAXE);
+  static final Set<ToolType> pickaxe = Sets.newHashSet(ToolType.PICKAXE);
 
   @Nonnull
   @Override
   public Set<ToolType> getToolTypes(ItemStack stack) {
-    return types;
+    return pickaxe;
   }
 
   @Override

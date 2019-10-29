@@ -1,6 +1,5 @@
 package com.tfar.unstabletools.tools;
 
-import com.tfar.unstabletools.UnstableTools;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.ITooltipFlag;
@@ -14,13 +13,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ToolType;
-import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -39,7 +34,7 @@ public class ItemUnstableShears extends ShearsItem {
   @Nonnull
   @Override
   public Set<ToolType> getToolTypes(ItemStack stack) {
-    return ItemUnstablePickaxe.types;
+    return ItemUnstablePickaxe.pickaxe;
   }
 
   @Override

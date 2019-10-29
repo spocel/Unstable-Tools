@@ -76,7 +76,7 @@ public class ItemUnstableHoe extends HoeItem {
   }
 
   /**
-   * Current implementations of this method in child types do not use the entry argument beside ev. They just raise
+   * Current implementations of this method in child pickaxe do not use the entry argument beside ev. They just raise
    * the damage on the stack.
    */
   public boolean hitEntity(ItemStack stack, LivingEntity target, LivingEntity attacker) {

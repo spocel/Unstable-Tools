@@ -1,6 +1,6 @@
 package com.tfar.unstabletools.item;
 
-import com.tfar.unstabletools.crafting.IDivisionItem;
+import com.tfar.unstabletools.crafting.Config;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.gui.screen.Screen;
@@ -21,12 +21,15 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -35,7 +38,7 @@ import java.util.List;
 import static com.tfar.unstabletools.UnstableTools.ObjectHolders.*;
 
 @Mod.EventBusSubscriber
-public class ItemDivisionSign extends Item implements IDivisionItem, IItemColored {
+public class ItemDivisionSign extends Item implements IItemColored {
 
   public ItemDivisionSign(Properties properties) {
     super(properties);
@@ -46,7 +49,6 @@ public class ItemDivisionSign extends Item implements IDivisionItem, IItemColore
     return true;
   }
 
-
   @Override
   @Nonnull
   public ItemStack getContainerItem(ItemStack itemStack) {
@@ -54,7 +56,7 @@ public class ItemDivisionSign extends Item implements IDivisionItem, IItemColore
   }
 
   public static ItemStack damage(ItemStack stack) {
-    if (stack.getItem() == stable_division_sign)return stack;
+    if (stack.getItem() == stable_division_sign) return stack;
     CompoundNBT nbt = stack.getTag();
     int d = nbt.getInt("d");
     nbt.putInt("d", --d);
@@ -117,6 +119,9 @@ public class ItemDivisionSign extends Item implements IDivisionItem, IItemColore
     tooltip.add(new StringTextComponent("Uses Left: " + stack.getTag().getInt("d")));
   }
 
+  @ObjectHolder("cursedearth:cursed_earth")
+  public static final Block cursed_earth = null;
+
   @SubscribeEvent
   public static void onSacrifice(LivingDeathEvent e) {
     if (!(e.getSource().getTrueSource() instanceof PlayerEntity)) return;
@@ -142,13 +147,27 @@ public class ItemDivisionSign extends Item implements IDivisionItem, IItemColore
     NonNullList<ItemStack> mainInventory = player.inventory.mainInventory;
     for (int i = 0; i < mainInventory.size(); i++) {
       final ItemStack stack = mainInventory.get(i);
-      if (!(stack.getItem() == inactive_division_sign)) continue;
+      if (stack.getItem() != inactive_division_sign && stack.getItem() != division_sign) continue;
       ItemStack newStack = new ItemStack(division_sign);
       newStack.getOrCreateTag().putInt("d", 256);
-      mainInventory.set(i,newStack);
+      mainInventory.set(i, newStack);
     }
     if (!world.isRemote)
       ((ServerWorld) world).addLightningBolt(new LightningBoltEntity(sacrifice.world, sacrifice.posX, sacrifice.posY, sacrifice.posZ, false));
+    if (ModList.get().isLoaded("cursedearth") && Config.ServerConfig.cursed_earth_integration.get()) {
+      for (int x = pos.getX() - 7; x < pos.getX() + 8; x++)
+        for (int z = pos.getZ() - 7; z < pos.getZ() + 8; z++) {
+          int y = world.getHeight(Heightmap.Type.WORLD_SURFACE, x, z) - 1;
+          for (int y1 = y + 7; y1 > y - 7; y1--) {
+            BlockPos pos1 = new BlockPos(x, y1, z);
+            Block block1 = world.getBlockState(pos1).getBlock();
+            if (block1 == Blocks.DIRT || block1 == Blocks.GRASS_BLOCK) {
+              world.setBlockState(pos1, cursed_earth.getDefaultState());
+              break;
+            }
+          }
+        }
+    }
   }
 
   @Override

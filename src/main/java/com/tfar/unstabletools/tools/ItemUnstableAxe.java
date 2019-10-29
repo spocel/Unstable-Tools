@@ -32,18 +32,18 @@ public class ItemUnstableAxe extends AxeItem {
     return 0;
   }
 
-  private static final Set<ToolType> types = Sets.newHashSet(ToolType.AXE);
+  private static final Set<ToolType> axe = Sets.newHashSet(ToolType.AXE);
 
   @Nonnull
   @Override
   public Set<ToolType> getToolTypes(ItemStack stack) {
-    return types;
+    return axe;
   }
 
   @Override
   public void inventoryTick(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
     if (!isSelected || !(entityIn instanceof PlayerEntity) || worldIn.isRemote) return;
-    if (((PlayerEntity) entityIn).getRNG().nextFloat() > .05) return;
+    if (((PlayerEntity) entityIn).getRNG().nextFloat() > .1) return;
     ((PlayerEntity) entityIn).getFoodStats().addStats(1, 0.2F);  }
 
   @Override

@@ -40,11 +40,13 @@ import java.util.Set;
 
 import static com.tfar.unstabletools.UnstableTools.ObjectHolders.*;
 import static com.tfar.unstabletools.UnstableTools.ObjectHolders.unstable_block;
+import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
 
 @Mod(value = UnstableTools.MODID)
 public class UnstableTools {
 
   public UnstableTools() {
+    EVENT_BUS.addListener(this::onDrops);
     ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.COMMON_SPEC);
   }
 
@@ -144,7 +146,7 @@ public class UnstableTools {
     @SubscribeEvent
     public static void registerBlock(RegistryEvent.Register<Block> event) {
       IForgeRegistry<Block> registry = event.getRegistry();
-      registerObject(new Block(Block.Properties.create(Material.IRON).hardnessAndResistance(5, 6000)) {
+      register(new Block(Block.Properties.create(Material.IRON).hardnessAndResistance(5, 6000)) {
 
                        @Nonnull
                        @Override
@@ -178,41 +180,38 @@ public class UnstableTools {
 
       Item.Properties properties = new Item.Properties().group(creativeTab);
 
-      registerObject(new ItemUnstableIngot(properties), "unstable_ingot", registry);
-      registerObject(new ItemUnstableShears(properties), "unstable_shears", registry);
+      register(new ItemUnstableIngot(properties), "unstable_ingot", registry);
+      register(new ItemUnstableShears(properties), "unstable_shears", registry);
 
-      registerObject(new BlockItem(unstable_block, properties), unstable_block.getRegistryName().getPath(), registry);
+      register(new BlockItem(unstable_block, properties), unstable_block.getRegistryName().getPath(), registry);
 
-      registerObject(new ItemUnstableAxe(UNSTABLE, properties), "unstable_axe", registry);
-      registerObject(new ItemUnstableSpade(UNSTABLE, 3, -1.5f, properties), "unstable_spade", registry);
-      registerObject(new ItemUnstablePickaxe(UNSTABLE, 1, -2.8f, properties), "unstable_pickaxe", registry);
-      registerObject(new ItemUnstableSword(UNSTABLE, 3, -2.4f, properties), "unstable_sword", registry);
-      registerObject(new ItemUnstableHoe(UNSTABLE, 1, properties), "unstable_hoe", registry);
+      register(new ItemUnstableAxe(UNSTABLE, properties), "unstable_axe", registry);
+      register(new ItemUnstableSpade(UNSTABLE, 3, -1.5f, properties), "unstable_spade", registry);
+      register(new ItemUnstablePickaxe(UNSTABLE, 1, -2.8f, properties), "unstable_pickaxe", registry);
+      register(new ItemUnstableSword(UNSTABLE, 3, -2.4f, properties), "unstable_sword", registry);
+      register(new ItemUnstableHoe(UNSTABLE, 1, properties), "unstable_hoe", registry);
 
-      registerObject(new ItemUnstableArmor(properties, UNSTABLE_ARMOR, EquipmentSlotType.HEAD), "unstable_helmet", registry);
-      registerObject(new ItemUnstableArmor(properties, UNSTABLE_ARMOR, EquipmentSlotType.CHEST), "unstable_chestplate", registry);
-      registerObject(new ItemUnstableArmor(properties, UNSTABLE_ARMOR, EquipmentSlotType.LEGS), "unstable_leggings", registry);
-      registerObject(new ItemUnstableArmor(properties, UNSTABLE_ARMOR, EquipmentSlotType.FEET), "unstable_boots", registry);
-      registerObject(new ItemDivisionSign(properties), "inactive_division_sign", registry);
-      registerObject(new ItemDivisionSign(properties), "division_sign", registry);
-      registerObject(new ItemDivisionSign(properties), "stable_division_sign", registry);
+      register(new ItemUnstableArmor(properties, UNSTABLE_ARMOR, EquipmentSlotType.HEAD), "unstable_helmet", registry);
+      register(new ItemUnstableArmor(properties, UNSTABLE_ARMOR, EquipmentSlotType.CHEST), "unstable_chestplate", registry);
+      register(new ItemUnstableArmor(properties, UNSTABLE_ARMOR, EquipmentSlotType.LEGS), "unstable_leggings", registry);
+      register(new ItemUnstableArmor(properties, UNSTABLE_ARMOR, EquipmentSlotType.FEET), "unstable_boots", registry);
+      register(new ItemDivisionSign(properties), "inactive_division_sign", registry);
+      register(new ItemDivisionSign(properties), "division_sign", registry);
+      register(new ItemDivisionSign(properties), "stable_division_sign", registry);
     }
 
     @SubscribeEvent
     public static void registerSerials(RegistryEvent.Register<IRecipeSerializer<?>> event) {
-      registerObject(new SpecialRecipeSerializer<>(RecipeDivision::new),"division",event.getRegistry());
+      register(new SpecialRecipeSerializer<>(RecipeDivision::new),"division",event.getRegistry());
     }
 
-    private static <T extends IForgeRegistryEntry<T>> void registerObject(T obj, String name, IForgeRegistry<T> registryObj) {
-      registryObj.register(obj.setRegistryName(new ResourceLocation(MODID, name)));
+    private static <T extends IForgeRegistryEntry<T>> void register(T obj, String name, IForgeRegistry<T> registry) {
+      registry.register(obj.setRegistryName(new ResourceLocation(MODID, name)));
       if (obj instanceof Item) MOD_ITEMS.add((Item) obj);
     }
   }
 
-  @Mod.EventBusSubscriber(modid = MODID)
-  public static class DropHandler {
-    @SubscribeEvent
-    public static void onEvent(LivingDropsEvent event) {
+    public void onDrops(LivingDropsEvent event) {
       LivingEntity entity = event.getEntityLiving();
       if (entity instanceof WitherEntity && (event.getSource().getTrueSource() instanceof PlayerEntity)
               && !(event.getSource().getTrueSource() instanceof FakePlayer)) {
@@ -222,7 +221,7 @@ public class UnstableTools {
                 entity.posY, entity.posZ, itemStackToDrop));
       }
     }
-  }
+
 
   @ObjectHolder(MODID)
   public static class ObjectHolders {
