@@ -58,9 +58,7 @@ public class ItemDivisionSign extends Item implements IItemColored {
   public static ItemStack damage(ItemStack stack) {
     if (stack.getItem() == stable_division_sign) return stack;
     CompoundNBT nbt = stack.getTag();
-    int d = nbt.getInt("d");
-    nbt.putInt("d", --d);
-    stack.setTag(nbt);
+    nbt.putInt("d", nbt.getInt("d") - 1);
     return stack;
   }
 

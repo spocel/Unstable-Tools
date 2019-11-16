@@ -23,10 +23,6 @@ public class ItemUnstableAxe extends AxeItem {
     super(materialIn, damage, attackSpeed, properties);
   }
 
-  public ItemUnstableAxe(IItemTier materialIn,Properties properties) {
-    this(materialIn, 9, -3,properties);
-  }
-
   @Override
   public int getMaxDamage(ItemStack stack) {
     return 0;
@@ -43,7 +39,6 @@ public class ItemUnstableAxe extends AxeItem {
   @Override
   public void inventoryTick(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
     if (!isSelected || !(entityIn instanceof PlayerEntity) || worldIn.isRemote) return;
-    if (((PlayerEntity) entityIn).getRNG().nextFloat() > .1) return;
     ((PlayerEntity) entityIn).getFoodStats().addStats(1, 0.2F);  }
 
   @Override
@@ -52,8 +47,8 @@ public class ItemUnstableAxe extends AxeItem {
       if (((LivingEntity) entity).getCreatureAttribute() == CreatureAttribute.UNDEAD)
         entity.attackEntityFrom(DamageSource.causePlayerDamage(player), 8);
       else ((LivingEntity) entity).heal(8);
+      player.addPotionEffect(new EffectInstance(Effects.HUNGER,20,4));
     }
-    player.addPotionEffect(new EffectInstance(Effects.HUNGER,20,4));
     return true;
   }
 }

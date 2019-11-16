@@ -10,6 +10,6 @@ import net.minecraftforge.fml.common.Mod;
 public class Client {
   @SubscribeEvent
   public static void colors(ColorHandlerEvent.Item e) {
-    UnstableTools.MOD_ITEMS.stream().filter(item -> item instanceof IItemColored).forEach(item -> e.getItemColors().register(((IItemColored) item)::getColor, item));
+    UnstableTools.MOD_ITEMS.stream().filter(IItemColored.class::isInstance).forEach(item -> e.getItemColors().register(((IItemColored) item)::getColor, item));
   }
 }

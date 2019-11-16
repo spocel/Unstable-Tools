@@ -56,7 +56,7 @@ super(idIn, MODID,1,3,NonNullList.from(Ingredient.EMPTY, Ingredient.fromItems(It
   @Override
   public ItemStack getCraftingResult(CraftingInventory inv) {
     ItemStack output = super.getCraftingResult(inv);
-    output.getOrCreateTag().putInt("timer",200);
+    output.getOrCreateTag().putInt("timer",Config.ServerConfig.timer.get());
     return output;
   }
 

@@ -90,7 +90,7 @@ public class UnstableTools {
 
   public static class UnstableArmorMaterial implements IArmorMaterial {
 
-    private int[] array = new int[]{4, 7, 9, 4};
+    private static int[] array = new int[]{4, 7, 9, 4};
 
     @Override
     public int getDurability(@Nonnull EquipmentSlotType slotIn) {
@@ -98,8 +98,8 @@ public class UnstableTools {
     }
 
     @Override
-    public int getDamageReductionAmount(@Nonnull EquipmentSlotType slotIn) {
-      return array[slotIn.getIndex()];
+    public int getDamageReductionAmount(@Nonnull EquipmentSlotType slot) {
+      return array[slot.getIndex()];
     }
 
     @Override
@@ -185,7 +185,7 @@ public class UnstableTools {
 
       register(new BlockItem(unstable_block, properties), unstable_block.getRegistryName().getPath(), registry);
 
-      register(new ItemUnstableAxe(UNSTABLE, properties), "unstable_axe", registry);
+      register(new ItemUnstableAxe(UNSTABLE,9, -3, properties), "unstable_axe", registry);
       register(new ItemUnstableSpade(UNSTABLE, 3, -1.5f, properties), "unstable_spade", registry);
       register(new ItemUnstablePickaxe(UNSTABLE, 1, -2.8f, properties), "unstable_pickaxe", registry);
       register(new ItemUnstableSword(UNSTABLE, 3, -2.4f, properties), "unstable_sword", registry);
