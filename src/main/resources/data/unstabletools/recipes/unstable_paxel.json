@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "spa",
+    " o ",
+    " o "
+  ],
+  "key": {
+    "s": {
+      "item": "unstabletools:unstable_spade"
+    },
+    "p": {
+      "item": "unstabletools:unstable_pickaxe"
+    },
+    "a": {
+      "item": "unstabletools:unstable_axe"
+    },
+    "o": {
+      "item": "minecraft:obsidian"
+    }
+  },
+  "result": {
+    "item": "unstabletools:unstable_paxel"
+  }
+}

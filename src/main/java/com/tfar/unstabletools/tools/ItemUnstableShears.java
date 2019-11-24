@@ -1,5 +1,6 @@
 package com.tfar.unstabletools.tools;
 
+import com.google.common.collect.Sets;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.ITooltipFlag;
@@ -31,10 +32,13 @@ public class ItemUnstableShears extends ShearsItem {
     return 3;
   }
 
+  private static final Set<ToolType> pickaxe = Sets.newHashSet(ToolType.PICKAXE);
+
+
   @Nonnull
   @Override
   public Set<ToolType> getToolTypes(ItemStack stack) {
-    return ItemUnstablePickaxe.pickaxe;
+    return pickaxe;
   }
 
   @Override

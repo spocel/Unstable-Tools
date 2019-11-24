@@ -186,10 +186,14 @@ public class UnstableTools {
       register(new BlockItem(unstable_block, properties), unstable_block.getRegistryName().getPath(), registry);
 
       register(new ItemUnstableAxe(UNSTABLE,9, -3, properties), "unstable_axe", registry);
-      register(new ItemUnstableSpade(UNSTABLE, 3, -1.5f, properties), "unstable_spade", registry);
-      register(new ItemUnstablePickaxe(UNSTABLE, 1, -2.8f, properties), "unstable_pickaxe", registry);
-      register(new ItemUnstableSword(UNSTABLE, 3, -2.4f, properties), "unstable_sword", registry);
+      register(new ShovelItem(UNSTABLE, 3, -1.5f, properties), "unstable_spade", registry);
+      register(new PickaxeItem(UNSTABLE, 1, -2.8f, properties), "unstable_pickaxe", registry);
+      register(new SwordItem(UNSTABLE, 3, -2.4f, properties), "unstable_sword", registry);
       register(new ItemUnstableHoe(UNSTABLE, 1, properties), "unstable_hoe", registry);
+
+      register(new FishingRodItem(properties),"unstable_fishing_rod",registry);
+      register(new UnstablePaxelItem( 1,-1,UNSTABLE, AxeItem.EFFECTIVE_ON, properties), "unstable_paxel", registry);
+      register(new UnstableBowItem(properties),"unstable_bow",registry);
 
       register(new ItemUnstableArmor(properties, UNSTABLE_ARMOR, EquipmentSlotType.HEAD), "unstable_helmet", registry);
       register(new ItemUnstableArmor(properties, UNSTABLE_ARMOR, EquipmentSlotType.CHEST), "unstable_chestplate", registry);

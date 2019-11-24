@@ -1,0 +1,14 @@
+{
+  "parent": "item/handheld_rod",
+  "textures": {
+    "layer0": "unstabletools:items/unstable_fishing_rod"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "cast": 1
+      },
+      "model": "unstabletools:item/unstable_fishing_rod_cast"
+    }
+  ]
+}
