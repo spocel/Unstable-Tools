@@ -42,15 +42,6 @@ public class ItemUnstableShears extends ShearsItem {
   }
 
   @Override
-  @OnlyIn(Dist.CLIENT)
-  public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-    if (Screen.hasShiftDown()){
-      tooltip.add(new StringTextComponent("Normally this would teleport dropped items into the inventory").applyTextStyle(TextFormatting.AQUA));
-      tooltip.add(new StringTextComponent("But that won't work until https://github.com/MinecraftForge/MinecraftForge/pull/5871 gets merged").applyTextStyle(TextFormatting.AQUA));
-    }
-  }
-
-  @Override
   public float getDestroySpeed(ItemStack stack, BlockState state) {
     return 20;
   }
