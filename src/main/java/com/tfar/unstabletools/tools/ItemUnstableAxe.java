@@ -23,11 +23,6 @@ public class ItemUnstableAxe extends AxeItem {
     super(materialIn, damage, attackSpeed, properties);
   }
 
-  @Override
-  public int getMaxDamage(ItemStack stack) {
-    return 0;
-  }
-
   private static final Set<ToolType> axe = Sets.newHashSet(ToolType.AXE);
 
   @Nonnull
@@ -37,9 +32,9 @@ public class ItemUnstableAxe extends AxeItem {
   }
 
   @Override
-  public void inventoryTick(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
-    if (!isSelected || !(entityIn instanceof PlayerEntity) || worldIn.isRemote) return;
-    ((PlayerEntity) entityIn).getFoodStats().addStats(1, 0.2F);  }
+  public void inventoryTick(ItemStack stack, World worldIn, Entity entity, int itemSlot, boolean isSelected) {
+    if (!isSelected || !(entity instanceof PlayerEntity) || worldIn.isRemote) return;
+    ((PlayerEntity) entity).getFoodStats().addStats(1, 0.2F);  }
 
   @Override
   public boolean onLeftClickEntity(ItemStack stack, PlayerEntity player, Entity entity) {

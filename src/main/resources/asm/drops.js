@@ -26,7 +26,6 @@ function initializeCoreMod() {
                 newInstructions.add(new VarInsnNode(Opcodes.ALOAD, 6));
                 newInstructions.add(new VarInsnNode(Opcodes.ALOAD, 4));
 
-
                 newInstructions.add(ASM.buildMethodCall(
                     "com/tfar/unstabletools/ASMHooks",
                     "getdrops",

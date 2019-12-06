@@ -59,7 +59,7 @@ public class ItemUnstableIngot extends Item implements IItemColored {
 
   @Override
   public int getItemStackLimit(ItemStack stack) {
-    return (stack.hasTag()) ? 1 : 64;
+    return stack.hasTag() ? 1 : 64;
   }
 
   @SubscribeEvent

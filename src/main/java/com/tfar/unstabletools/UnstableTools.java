@@ -1,6 +1,5 @@
 package com.tfar.unstabletools;
 
-import com.tfar.unstabletools.armor.ItemUnstableArmor;
 import com.tfar.unstabletools.crafting.Config;
 import com.tfar.unstabletools.crafting.RecipeDivision;
 import com.tfar.unstabletools.item.ItemDivisionSign;
@@ -23,6 +22,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
@@ -35,6 +35,7 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -148,7 +149,13 @@ public class UnstableTools {
       IForgeRegistry<Block> registry = event.getRegistry();
       register(new Block(Block.Properties.create(Material.IRON).hardnessAndResistance(5, 6000)) {
 
-                       @Nonnull
+                 @Nullable
+                 @Override
+                 public ToolType getHarvestTool(BlockState state) {
+                   return ToolType.PICKAXE;
+                 }
+
+                 @Nonnull
                        @Override
                        public BlockRenderLayer getRenderLayer() {
                          return BlockRenderLayer.CUTOUT;
@@ -157,8 +164,7 @@ public class UnstableTools {
                        @Override
                        @OnlyIn(Dist.CLIENT)
                        public boolean isSideInvisible(BlockState state, BlockState adjacentBlockState, Direction side) {
-                         return adjacentBlockState.getBlock() == this
-                                 || !adjacentBlockState.getBlock().isAir(adjacentBlockState, null, null);
+                         return adjacentBlockState.getBlock() == this;
                        }
 
                        @Override
@@ -195,10 +201,10 @@ public class UnstableTools {
       register(new UnstablePaxelItem( 1,-1,UNSTABLE, AxeItem.EFFECTIVE_ON, properties), "unstable_paxel", registry);
       register(new UnstableBowItem(properties),"unstable_bow",registry);
 
-      register(new ItemUnstableArmor(properties, UNSTABLE_ARMOR, EquipmentSlotType.HEAD), "unstable_helmet", registry);
-      register(new ItemUnstableArmor(properties, UNSTABLE_ARMOR, EquipmentSlotType.CHEST), "unstable_chestplate", registry);
-      register(new ItemUnstableArmor(properties, UNSTABLE_ARMOR, EquipmentSlotType.LEGS), "unstable_leggings", registry);
-      register(new ItemUnstableArmor(properties, UNSTABLE_ARMOR, EquipmentSlotType.FEET), "unstable_boots", registry);
+      register(new ArmorItem(UNSTABLE_ARMOR, EquipmentSlotType.HEAD, properties), "unstable_helmet", registry);
+      register(new ArmorItem(UNSTABLE_ARMOR, EquipmentSlotType.CHEST, properties), "unstable_chestplate", registry);
+      register(new ArmorItem(UNSTABLE_ARMOR, EquipmentSlotType.LEGS, properties), "unstable_leggings", registry);
+      register(new ArmorItem(UNSTABLE_ARMOR, EquipmentSlotType.FEET, properties), "unstable_boots", registry);
       register(new ItemDivisionSign(properties), "inactive_division_sign", registry);
       register(new ItemDivisionSign(properties), "division_sign", registry);
       register(new ItemDivisionSign(properties), "stable_division_sign", registry);
