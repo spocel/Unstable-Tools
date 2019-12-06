@@ -46,7 +46,7 @@ public class ItemDivisionSign extends Item implements IItemColored {
 
   @Override
   public boolean hasContainerItem(ItemStack stack) {
-    return true;
+    return stack.getItem() == stable_division_sign || stack.hasTag();
   }
 
   @Override
