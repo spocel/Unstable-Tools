@@ -151,7 +151,7 @@ public class ItemDivisionSign extends Item implements IItemColored {
       mainInventory.set(i, newStack);
     }
     if (!world.isRemote)
-      ((ServerWorld) world).addLightningBolt(new LightningBoltEntity(sacrifice.world, sacrifice.posX, sacrifice.posY, sacrifice.posZ, false));
+      ((ServerWorld) world).addLightningBolt(new LightningBoltEntity(sacrifice.world, sacrifice.func_226277_ct_(), sacrifice.func_226278_cu_(), sacrifice.func_226281_cx_(), false));
     if (ModList.get().isLoaded("cursedearth") && Config.ServerConfig.cursed_earth_integration.get()) {
       for (int x = pos.getX() - 7; x < pos.getX() + 8; x++)
         for (int z = pos.getZ() - 7; z < pos.getZ() + 8; z++) {

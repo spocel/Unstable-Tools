@@ -92,7 +92,7 @@ public class ItemUnstableIngot extends Item implements IItemColored {
 
     if (!explode) return;
     PlayerEntity p = e.player;
-    world.createExplosion(null, p.posX, p.posY, p.posZ, 1, Explosion.Mode.NONE);
+    world.createExplosion(null, p.func_226277_ct_(), p.func_226278_cu_(), p.func_226281_cx_(), 1, Explosion.Mode.NONE);
     p.attackEntityFrom(DIVIDE_BY_DIAMOND, 100);
   }
 
@@ -108,7 +108,7 @@ public class ItemUnstableIngot extends Item implements IItemColored {
       explode = true;
     }
     if (!explode) return;
-    p.world.createExplosion(null, p.posX, p.posY, p.posZ, 1, Explosion.Mode.NONE);
+    p.world.createExplosion(null, p.func_226277_ct_(), p.func_226278_cu_(), p.func_226281_cx_(), 1, Explosion.Mode.NONE);
     p.attackEntityFrom(ESCAPE_DIVIDE_BY_DIAMOND, 100);
   }
 
@@ -118,7 +118,7 @@ public class ItemUnstableIngot extends Item implements IItemColored {
     ItemEntity entityItem = e.getEntityItem();
     ItemStack stack = entityItem.getItem();
     if (checkExplosion(stack)) {
-      p.world.createExplosion(null, p.posX, p.posY, p.posZ, 1, Explosion.Mode.NONE);
+      p.world.createExplosion(null, p.func_226277_ct_(), p.func_226278_cu_(), p.func_226281_cx_(), 1, Explosion.Mode.NONE);
       p.attackEntityFrom(ESCAPE_DIVIDE_BY_DIAMOND, 100);
       e.setCanceled(true);
     }

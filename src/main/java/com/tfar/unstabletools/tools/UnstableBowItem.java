@@ -34,12 +34,12 @@ public class UnstableBowItem extends BowItem {
    */
   public void onPlayerStoppedUsing(ItemStack stack, World worldIn, LivingEntity entityLiving, int timeLeft) {
     if (entityLiving instanceof PlayerEntity) {
-      PlayerEntity playerentity = (PlayerEntity)entityLiving;
-      boolean flag = playerentity.abilities.isCreativeMode || EnchantmentHelper.getEnchantmentLevel(Enchantments.INFINITY, stack) > 0;
-      ItemStack itemstack = playerentity.findAmmo(stack);
+      PlayerEntity player = (PlayerEntity)entityLiving;
+      boolean flag = player.abilities.isCreativeMode || EnchantmentHelper.getEnchantmentLevel(Enchantments.INFINITY, stack) > 0;
+      ItemStack itemstack = player.findAmmo(stack);
 
       int i = this.getUseDuration(stack) - timeLeft;
-      i = net.minecraftforge.event.ForgeEventFactory.onArrowLoose(stack, worldIn, playerentity, i, !itemstack.isEmpty() || flag);
+      i = net.minecraftforge.event.ForgeEventFactory.onArrowLoose(stack, worldIn, player, i, !itemstack.isEmpty() || flag);
       if (i < 0) return;
 
       if (!itemstack.isEmpty() || flag) {
@@ -53,9 +53,9 @@ public class UnstableBowItem extends BowItem {
         }
         if (!worldIn.isRemote) {
           ArrowItem arrowitem = (ArrowItem)(itemstack.getItem() instanceof ArrowItem ? itemstack.getItem() : Items.ARROW);
-          AbstractArrowEntity abstractarrowentity = arrowitem.createArrow(worldIn, itemstack, playerentity);
+          AbstractArrowEntity abstractarrowentity = arrowitem.createArrow(worldIn, itemstack, player);
           abstractarrowentity = customeArrow(abstractarrowentity);
-          abstractarrowentity.shoot(playerentity, playerentity.rotationPitch, playerentity.rotationYaw, 0, (float) (f * 3.0F), 1);
+          abstractarrowentity.shoot(player, player.rotationPitch, player.rotationYaw, 0, (float) (f * 3.0F), 1);
           if (f >= 1) {
             abstractarrowentity.setIsCritical(true);
           }
@@ -78,9 +78,9 @@ public class UnstableBowItem extends BowItem {
           worldIn.addEntity(abstractarrowentity);
         }
 
-        worldIn.playSound(null, playerentity.posX, playerentity.posY, playerentity.posZ, SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0F, (float) (1.0F / (random.nextFloat() * 0.4F + 1.2F) + f * 0.5F));
+        worldIn.playSound(null, player.func_226277_ct_(), player.func_226278_cu_(), player.func_226281_cx_(), SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0F, (float) (1.0F / (random.nextFloat() * 0.4F + 1.2F) + f * 0.5F));
 
-        playerentity.addStat(Stats.ITEM_USED.get(this));
+        player.addStat(Stats.ITEM_USED.get(this));
       }
     }
   }

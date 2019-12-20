@@ -155,28 +155,17 @@ public class UnstableTools {
                    return ToolType.PICKAXE;
                  }
 
-                 @Nonnull
-                       @Override
-                       public BlockRenderLayer getRenderLayer() {
-                         return BlockRenderLayer.CUTOUT;
-                       }
+                 @Override
+                 @OnlyIn(Dist.CLIENT)
+                 public boolean isSideInvisible(BlockState state, BlockState adjacentBlockState, Direction side) {
+                   return adjacentBlockState.getBlock() == this;
+                 }
 
-                       @Override
-                       @OnlyIn(Dist.CLIENT)
-                       public boolean isSideInvisible(BlockState state, BlockState adjacentBlockState, Direction side) {
-                         return adjacentBlockState.getBlock() == this;
-                       }
-
-                       @Override
-                       public boolean isSolid(BlockState state) {
-                         return true;
-                       }
-
-                       @Override
-                       public boolean isBeaconBase(BlockState state, IWorldReader world, BlockPos pos, BlockPos beacon) {
-                         return true;
-                       }
-                     }
+                 @Override
+                 public boolean isBeaconBase(BlockState state, IWorldReader world, BlockPos pos, BlockPos beacon) {
+                   return true;
+                 }
+               }
               , "unstable_block", registry);
     }
 
@@ -191,15 +180,15 @@ public class UnstableTools {
 
       register(new BlockItem(unstable_block, properties), unstable_block.getRegistryName().getPath(), registry);
 
-      register(new ItemUnstableAxe(UNSTABLE,9, -3, properties), "unstable_axe", registry);
+      register(new ItemUnstableAxe(UNSTABLE, 9, -3, properties), "unstable_axe", registry);
       register(new ShovelItem(UNSTABLE, 3, -1.5f, properties), "unstable_spade", registry);
       register(new PickaxeItem(UNSTABLE, 1, -2.8f, properties), "unstable_pickaxe", registry);
       register(new SwordItem(UNSTABLE, 3, -2.4f, properties), "unstable_sword", registry);
       register(new ItemUnstableHoe(UNSTABLE, 1, properties), "unstable_hoe", registry);
 
-      register(new FishingRodItem(properties),"unstable_fishing_rod",registry);
-      register(new UnstablePaxelItem( 1,-1,UNSTABLE, AxeItem.EFFECTIVE_ON, properties), "unstable_paxel", registry);
-      register(new UnstableBowItem(properties),"unstable_bow",registry);
+      register(new FishingRodItem(properties), "unstable_fishing_rod", registry);
+      register(new UnstablePaxelItem(1, -1, UNSTABLE, AxeItem.EFFECTIVE_ON, properties), "unstable_paxel", registry);
+      register(new UnstableBowItem(properties), "unstable_bow", registry);
 
       register(new ArmorItem(UNSTABLE_ARMOR, EquipmentSlotType.HEAD, properties), "unstable_helmet", registry);
       register(new ArmorItem(UNSTABLE_ARMOR, EquipmentSlotType.CHEST, properties), "unstable_chestplate", registry);
@@ -212,7 +201,7 @@ public class UnstableTools {
 
     @SubscribeEvent
     public static void registerSerials(RegistryEvent.Register<IRecipeSerializer<?>> event) {
-      register(new SpecialRecipeSerializer<>(RecipeDivision::new),"division",event.getRegistry());
+      register(new SpecialRecipeSerializer<>(RecipeDivision::new), "division", event.getRegistry());
     }
 
     private static <T extends IForgeRegistryEntry<T>> void register(T obj, String name, IForgeRegistry<T> registry) {
@@ -221,16 +210,15 @@ public class UnstableTools {
     }
   }
 
-    public void onDrops(LivingDropsEvent event) {
-      LivingEntity entity = event.getEntityLiving();
-      if (entity instanceof WitherEntity && (event.getSource().getTrueSource() instanceof PlayerEntity)
-              && !(event.getSource().getTrueSource() instanceof FakePlayer)) {
+  public void onDrops(LivingDropsEvent event) {
+    LivingEntity entity = event.getEntityLiving();
+    if (entity instanceof WitherEntity && (event.getSource().getTrueSource() instanceof PlayerEntity)
+            && !(event.getSource().getTrueSource() instanceof FakePlayer)) {
 
-        ItemStack itemStackToDrop = new ItemStack(inactive_division_sign);
-        event.getDrops().add(new ItemEntity(entity.world, entity.posX,
-                entity.posY, entity.posZ, itemStackToDrop));
-      }
+      ItemStack itemStackToDrop = new ItemStack(inactive_division_sign);
+      event.getDrops().add(new ItemEntity(entity.world, entity.func_226277_ct_(), entity.func_226278_cu_(), entity.func_226281_cx_(), itemStackToDrop));
     }
+  }
 
 
   @ObjectHolder(MODID)
