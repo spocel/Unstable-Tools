@@ -1,5 +1,6 @@
 package com.tfar.unstabletools.item;
 
+import com.tfar.unstabletools.UnstableToolsConfig;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -53,27 +54,29 @@ public class ItemUnstableIngot extends Item implements IItemColored {
 
     World world = e.player.world;
     Container container = e.player.openContainer;
-    boolean explode = false;
+    if (UnstableToolsConfig.allowed_container_classes.contains(container.getClass())) {
+      boolean explode = false;
 
-    for (Slot slot : container.inventorySlots) {
-      ItemStack stack = slot.getStack();
-      if (!(stack.getItem() instanceof ItemUnstableIngot) || !stack.hasTagCompound() || slot instanceof SlotCrafting)
-        continue;
-      int timer = stack.getTagCompound().getInteger("timer");
-      if (timer == 0) {
-        stack.shrink(1);
-        explode = true;
-        continue;
+      for (Slot slot : container.inventorySlots) {
+        ItemStack stack = slot.getStack();
+        if (!(stack.getItem() instanceof ItemUnstableIngot) || !stack.hasTagCompound() || slot instanceof SlotCrafting)
+          continue;
+        int timer = stack.getTagCompound().getInteger("timer");
+        if (timer == 0) {
+          stack.shrink(1);
+          explode = true;
+          continue;
+        }
+        stack.getTagCompound().setInteger("timer", --timer);
       }
-      stack.getTagCompound().setInteger("timer", --timer);
+      if (!world.isRemote)
+        container.detectAndSendChanges();
+
+      if (!explode) return;
+      EntityPlayer p = e.player;
+      world.createExplosion(null, p.posX, p.posY, p.posZ, 1, false);
+      p.attackEntityFrom(DIVIDE_BY_DIAMOND, 100);
     }
-
-    container.detectAndSendChanges();
-
-    if (!explode) return;
-    EntityPlayer p = e.player;
-    world.createExplosion(null, p.posX, p.posY, p.posZ, 1, false);
-    p.attackEntityFrom(DIVIDE_BY_DIAMOND, 100);
   }
 
   @SubscribeEvent

@@ -2,6 +2,7 @@ package com.tfar.unstabletools.crafting;
 
 import com.google.gson.JsonObject;
 import com.tfar.unstabletools.UnstableTools;
+import com.tfar.unstabletools.UnstableToolsConfig;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ContainerWorkbench;
 import net.minecraft.inventory.InventoryCrafting;
@@ -10,6 +11,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.IRecipeFactory;
 import net.minecraftforge.common.crafting.JsonContext;
@@ -37,32 +39,45 @@ public class RecipeDivisionFactory implements IRecipeFactory {
       super(group, result, primer);
     }
 
-    @Nonnull
     @Override
-    public ItemStack getRecipeOutput() {
-      return super.getRecipeOutput();
-    }
+    public boolean matches(@Nonnull InventoryCrafting inv, @Nonnull World world) {
+      if (!super.matches(inv, world))return false;
 
-    @Override
-    @Nonnull
-    public ItemStack getCraftingResult(@Nonnull InventoryCrafting var1) {
-
-      ItemStack newOutput = this.output.copy();
       ItemStack divisionSign = ItemStack.EMPTY;
-      for (int i = 0; i < var1.getSizeInventory(); ++i) {
-        ItemStack stack = var1.getStackInSlot(i);
+      for (int i = 0; i < inv.getSizeInventory(); ++i) {
+        ItemStack stack = inv.getStackInSlot(i);
         if (stack.getItem() instanceof IDivisionItem) {
           divisionSign = stack;
         }
       }
-      boolean activated = divisionSign.getTagCompound().getBoolean("activated");
+
+      NBTTagCompound nbt = divisionSign.getTagCompound();
+
+      if (nbt == null)return false;
+
+      boolean activated = nbt.getBoolean("activated");
+
+      Container c = ObfuscationReflectionHelper.getPrivateValue(InventoryCrafting.class,inv,"field_70465_c");
+      return UnstableToolsConfig.allowed_container_classes.contains(c.getClass()) && activated;
+
+    }
+
+    @Override
+    @Nonnull
+    public ItemStack getCraftingResult(@Nonnull InventoryCrafting inv) {
+      ItemStack newOutput = super.getCraftingResult(inv);
+
+      ItemStack divisionSign = ItemStack.EMPTY;
+      for (int i = 0; i < inv.getSizeInventory(); ++i) {
+        ItemStack stack = inv.getStackInSlot(i);
+        if (stack.getItem() instanceof IDivisionItem) {
+          divisionSign = stack;
+        }
+      }
 
       boolean stable = divisionSign.getTagCompound().getBoolean("stable");
 
       if (stable) return newOutput;
-
-      Container c = ObfuscationReflectionHelper.getPrivateValue(InventoryCrafting.class,var1,"field_70465_c");
-      if (!c.getClass().equals(ContainerWorkbench.class) || !activated) return ItemStack.EMPTY;
 
       NBTTagCompound nbt = new NBTTagCompound();
       nbt.setInteger("timer", 200);

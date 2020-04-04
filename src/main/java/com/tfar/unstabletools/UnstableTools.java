@@ -70,9 +70,7 @@ public class UnstableTools {
     UNSTABLE.setRepairItem(new ItemStack(ObjectHolders.unstableIngot));
     OreDictionary.registerOre("ingotUnstable", ObjectHolders.unstableIngot);
     OreDictionary.registerOre("blockUnstable", ObjectHolders.unstableBlock);
-
-
-
+    UnstableToolsConfig.sync();
   }
 
   @SubscribeEvent

@@ -67,12 +67,6 @@ public class ItemDivisionSign extends Item implements IDivisionItem,IItemColored
     return stack;
   }
 
-  private static NBTTagCompound fixNBT() {
-    NBTTagCompound nbt = new NBTTagCompound();
-    nbt.setInteger("d", 256);
-    return nbt;
-  }
-
   @Override
   @Nonnull
   public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
@@ -82,8 +76,8 @@ public class ItemDivisionSign extends Item implements IDivisionItem,IItemColored
     long time = world.getWorldInfo().getWorldTime() % 24000;
 
     boolean correctTime = false;
-    if (time <= 15500) player.sendMessage(new TextComponentTranslation("unstabletools.early"));
-    else if (time <= 16500) {player.sendMessage(new TextComponentTranslation("unstabletools.ontime"));correctTime=true;}
+    if (time <= 17500) player.sendMessage(new TextComponentTranslation("unstabletools.early"));
+    else if (time <= 18500) {player.sendMessage(new TextComponentTranslation("unstabletools.ontime"));correctTime=true;}
     else player.sendMessage(new TextComponentTranslation("unstabletools.late"));
     boolean circle = true;
     for (int i = -1; i < 2; i++) {
@@ -138,7 +132,7 @@ public class ItemDivisionSign extends Item implements IDivisionItem,IItemColored
     }
 
     long time = world.getWorldInfo().getWorldTime() % 24000;
-    if (time <= 15500 || time > 16500)return;
+    if (time <= 17500 || time > 18500)return;
 
     for (Slot slot : player.inventoryContainer.inventorySlots){
       ItemStack stack = slot.getStack();
