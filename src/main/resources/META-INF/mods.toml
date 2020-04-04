@@ -39,3 +39,10 @@ unstable ingots tools and armor
     versionRange="[28.0.45,)"
     ordering="NONE"
     side="BOTH"
+
+    [[dependencies.additionalevents]]
+        modId="forge"
+        mandatory=true
+        versionRange="[1.0,)"
+        ordering="NONE"
+        side="BOTH"

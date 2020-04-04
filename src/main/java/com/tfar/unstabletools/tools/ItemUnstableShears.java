@@ -2,6 +2,8 @@ package com.tfar.unstabletools.tools;
 
 import com.google.common.collect.Sets;
 import net.minecraft.block.BlockState;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ShearsItem;
@@ -40,6 +42,11 @@ public class ItemUnstableShears extends ShearsItem {
   @Override
   public boolean canHarvestBlock(BlockState block) {
     return true;
+  }
+
+  @Override
+  public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+    return super.canApplyAtEnchantingTable(stack,enchantment) || enchantment == Enchantments.SILK_TOUCH;
   }
 
   //doesn't work

@@ -1,5 +1,6 @@
 package com.tfar.unstabletools;
 
+import com.tfar.additionalevents.event.DropLootEvent;
 import com.tfar.unstabletools.crafting.Config;
 import com.tfar.unstabletools.crafting.RecipeDivision;
 import com.tfar.unstabletools.item.ItemDivisionSign;
@@ -8,6 +9,7 @@ import com.tfar.unstabletools.tools.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.item.ItemEntity;
@@ -20,6 +22,7 @@ import net.minecraft.item.crafting.SpecialRecipeSerializer;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
+import net.minecraft.world.storage.loot.LootParameters;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ToolType;
@@ -48,6 +51,7 @@ public class UnstableTools {
 
   public UnstableTools() {
     EVENT_BUS.addListener(this::onDrops);
+    EVENT_BUS.addListener(this::onBlockDrops);
     ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.COMMON_SPEC);
   }
 
@@ -210,7 +214,15 @@ public class UnstableTools {
     }
   }
 
-  public void onDrops(LivingDropsEvent event) {
+  private void onBlockDrops(DropLootEvent e){
+    PlayerEntity player = e.getPlayer();
+    if (player != null){
+      if (e.getContext() != null && e.getContext().get(LootParameters.TOOL).getItem() instanceof ItemUnstableShears)
+        e.getDrops().removeIf(player::addItemStackToInventory);
+    }
+  }
+
+  private void onDrops(LivingDropsEvent event) {
     LivingEntity entity = event.getEntityLiving();
     if (entity instanceof WitherEntity && (event.getSource().getTrueSource() instanceof PlayerEntity)
             && !(event.getSource().getTrueSource() instanceof FakePlayer)) {
@@ -220,23 +232,14 @@ public class UnstableTools {
     }
   }
 
-
   @ObjectHolder(MODID)
   public static class ObjectHolders {
-
     public static final Item unstable_ingot = null;
-
     public static final Block unstable_block = null;
-
     public static final Item inactive_division_sign = null;
-
     public static final Item division_sign = null;
-
     public static final Item stable_division_sign = null;
-
     public static final Item unstable_pickaxe = null;
-
     public static final IRecipeSerializer<?> division = null;
-
   }
 }

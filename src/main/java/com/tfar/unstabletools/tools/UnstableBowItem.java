@@ -94,7 +94,6 @@ public class UnstableBowItem extends BowItem {
     if (speed > 3) {
       speed = 3;
     }
-
     return speed;
   }
 

@@ -57,11 +57,6 @@ public class ItemUnstableIngot extends Item implements IItemColored {
     tooltip.add(new StringTextComponent("Time left: " + timer));
   }
 
-  @Override
-  public int getItemStackLimit(ItemStack stack) {
-    return stack.hasTag() ? 1 : 64;
-  }
-
   @SubscribeEvent
   public static void playertick(TickEvent.PlayerTickEvent e) {
 
@@ -82,7 +77,7 @@ public class ItemUnstableIngot extends Item implements IItemColored {
       if (!(stack.getItem() instanceof ItemUnstableIngot) || !stack.hasTag() || slot instanceof CraftingResultSlot)
         continue;
       int timer = stack.getTag().getInt("timer");
-      if (timer == 0) {
+      if (timer <= 0) {
         slot.putStack(ItemStack.EMPTY);
         explode = true;
         continue;
@@ -160,7 +155,7 @@ public class ItemUnstableIngot extends Item implements IItemColored {
           }
           default:
             //this should never be anything other than 1 or 0
-            throw new IllegalStateException("thonk");
+            throw new IllegalStateException("thonk"+scale);
         }
       }
       return (red << 16) + (green << 8) + blue;

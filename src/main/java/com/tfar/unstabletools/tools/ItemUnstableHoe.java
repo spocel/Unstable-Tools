@@ -26,11 +26,6 @@ public class ItemUnstableHoe extends HoeItem {
 
   protected static final Map<Block, BlockState> REVERSE_HOE_LOOKUP = new HashMap<>();
 
-  @Override
-  public int getMaxDamage(ItemStack stack) {
-    return 0;
-  }
-
   static {
     REVERSE_HOE_LOOKUP.put(Blocks.COBBLESTONE, Blocks.STONE.getDefaultState());
     REVERSE_HOE_LOOKUP.put(Blocks.GRAVEL, Blocks.COBBLESTONE.getDefaultState());
