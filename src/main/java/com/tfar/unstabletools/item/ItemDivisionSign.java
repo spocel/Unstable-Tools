@@ -42,15 +42,6 @@ public class ItemDivisionSign extends Item implements IDivisionItem,IItemColored
   }
 
   @Override
-  public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
-    if (!stack.hasTagCompound()) {
-      NBTTagCompound nbt = new NBTTagCompound();
-      nbt.setBoolean("activated", false);
-      stack.setTagCompound(nbt);
-    }
-  }
-
-  @Override
   @Nonnull
   public ItemStack getContainerItem(ItemStack itemStack) {
     return damage(itemStack.copy());
@@ -62,7 +53,12 @@ public class ItemDivisionSign extends Item implements IDivisionItem,IItemColored
     if (stable)return stack;
     int d = nbt.getInteger("d");
     d--;
-    nbt.setInteger("d", d);
+    if (d <= 0) {
+      nbt.removeTag("d");
+      nbt.removeTag("activated");
+    } else {
+      nbt.setInteger("d", d);
+    }
     stack.setTagCompound(nbt);
     return stack;
   }
