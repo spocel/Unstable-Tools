@@ -16,6 +16,8 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.world.World;
 
+import net.minecraft.item.Item.Properties;
+
 public class UnstableBowItem extends BowItem {
   public UnstableBowItem(Properties p_i48522_1_) {
     super(p_i48522_1_);
@@ -32,11 +34,11 @@ public class UnstableBowItem extends BowItem {
   /**
    * Called when the player stops using an Item (stops holding the right mouse button).
    */
-  public void onPlayerStoppedUsing(ItemStack stack, World worldIn, LivingEntity entityLiving, int timeLeft) {
+  public void releaseUsing(ItemStack stack, World worldIn, LivingEntity entityLiving, int timeLeft) {
     if (entityLiving instanceof PlayerEntity) {
       PlayerEntity player = (PlayerEntity)entityLiving;
-      boolean flag = player.abilities.isCreativeMode || EnchantmentHelper.getEnchantmentLevel(Enchantments.INFINITY, stack) > 0;
-      ItemStack itemstack = player.findAmmo(stack);
+      boolean flag = player.abilities.instabuild || EnchantmentHelper.getItemEnchantmentLevel(Enchantments.INFINITY_ARROWS, stack) > 0;
+      ItemStack itemstack = player.getProjectile(stack);
 
       int i = this.getUseDuration(stack) - timeLeft;
       i = net.minecraftforge.event.ForgeEventFactory.onArrowLoose(stack, worldIn, player, i, !itemstack.isEmpty() || flag);
@@ -51,36 +53,36 @@ public class UnstableBowItem extends BowItem {
         if (f < 0.1D) {
           return;
         }
-        if (!worldIn.isRemote) {
+        if (!worldIn.isClientSide) {
           ArrowItem arrowitem = (ArrowItem)(itemstack.getItem() instanceof ArrowItem ? itemstack.getItem() : Items.ARROW);
           AbstractArrowEntity abstractarrowentity = arrowitem.createArrow(worldIn, itemstack, player);
           abstractarrowentity = customArrow(abstractarrowentity);
       //    abstractarrowentity.shoot(player, player.rotationPitch, player.rotationYaw, 0, (float) (f * 3.0F), 1);
           if (f >= 1) {
-            abstractarrowentity.setIsCritical(true);
+            abstractarrowentity.setCritArrow(true);
           }
 
-          int j = EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, stack);
+          int j = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.POWER_ARROWS, stack);
           if (j > 0) {
-            abstractarrowentity.setDamage(abstractarrowentity.getDamage() + (double)j * 0.5D + 0.5D);
+            abstractarrowentity.setBaseDamage(abstractarrowentity.getBaseDamage() + (double)j * 0.5D + 0.5D);
           }
 
-          int k = EnchantmentHelper.getEnchantmentLevel(Enchantments.PUNCH, stack);
+          int k = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.PUNCH_ARROWS, stack);
           if (k > 0) {
-            abstractarrowentity.setKnockbackStrength(k);
+            abstractarrowentity.setKnockback(k);
           }
 
-          if (EnchantmentHelper.getEnchantmentLevel(Enchantments.FLAME, stack) > 0) {
-            abstractarrowentity.setFire(100);
+          if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FLAMING_ARROWS, stack) > 0) {
+            abstractarrowentity.setSecondsOnFire(100);
           }
 
-          abstractarrowentity.pickupStatus = AbstractArrowEntity.PickupStatus.CREATIVE_ONLY;
-          worldIn.addEntity(abstractarrowentity);
+          abstractarrowentity.pickup = AbstractArrowEntity.PickupStatus.CREATIVE_ONLY;
+          worldIn.addFreshEntity(abstractarrowentity);
         }
 
-        worldIn.playSound(null, player.getPosX(), player.getPosY(), player.getPosZ(), SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0F, (float) (1.0F / (random.nextFloat() * 0.4F + 1.2F) + f * 0.5F));
+        worldIn.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ARROW_SHOOT, SoundCategory.PLAYERS, 1.0F, (float) (1.0F / (random.nextFloat() * 0.4F + 1.2F) + f * 0.5F));
 
-        player.addStat(Stats.ITEM_USED.get(this));
+        player.awardStat(Stats.ITEM_USED.get(this));
       }
     }
   }
@@ -99,6 +101,6 @@ public class UnstableBowItem extends BowItem {
 
   @Override
   public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-    return enchantment != Enchantments.INFINITY && super.canApplyAtEnchantingTable(stack,enchantment);
+    return enchantment != Enchantments.INFINITY_ARROWS && super.canApplyAtEnchantingTable(stack,enchantment);
   }
 }

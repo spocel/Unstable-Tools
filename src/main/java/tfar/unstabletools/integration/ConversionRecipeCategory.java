@@ -24,7 +24,7 @@ public class ConversionRecipeCategory implements IRecipeCategory<ConversionRecip
 
 
     public ConversionRecipeCategory(IGuiHelper guiHelper) {
-        this.localizedName = I18n.format("gui.jei.unstabletools.category.block_conversions");
+        this.localizedName = I18n.get("gui.jei.unstabletools.category.block_conversions");
         this.background = guiHelper.drawableBuilder(RECIPE_GUI_VANILLA, 0, 0, 101, 18).build();
         this.icon = guiHelper.createDrawableIngredient(new ItemStack(UnstableTools.ObjectHolders.unstable_hoe));
     }

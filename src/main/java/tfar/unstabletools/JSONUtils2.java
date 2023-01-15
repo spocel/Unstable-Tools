@@ -17,7 +17,7 @@ public class JSONUtils2 {
                 return new JsonSyntaxException("Expected " + memberName + " to be a block, was unknown string '" + s + "'");
             });
         } else {
-            throw new JsonSyntaxException("Expected " + memberName + " to be a block, was " + JSONUtils.toString(json));
+            throw new JsonSyntaxException("Expected " + memberName + " to be a block, was " + JSONUtils.getType(json));
         }
     }
 

@@ -41,7 +41,7 @@ public class ConversionManager extends JsonReloadListener {
                     LOGGER.debug("Skipping loading conversion {} as it's conditions were not met", resourcelocation);
                     continue;
                 }
-                Pair<Block,Block> blockPair = deserializeConversion(resourcelocation, JSONUtils.getJsonObject(entry.getValue(), "top element"));
+                Pair<Block,Block> blockPair = deserializeConversion(resourcelocation, JSONUtils.convertToJsonObject(entry.getValue(), "top element"));
                 if (blockPair == null) {
                     LOGGER.info("Skipping loading conversion {} as it is empty", resourcelocation);
                     continue;

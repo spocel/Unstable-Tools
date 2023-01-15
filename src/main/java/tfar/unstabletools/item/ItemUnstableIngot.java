@@ -30,11 +30,13 @@ import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import net.minecraft.item.Item.Properties;
+
 @Mod.EventBusSubscriber
 public class ItemUnstableIngot extends Item implements IItemColored {
 
-  public static final DamageSource DIVIDE_BY_DIAMOND = (new DamageSource("divide_by_diamond").setDamageBypassesArmor());
-  public static final DamageSource ESCAPE_DIVIDE_BY_DIAMOND = (new DamageSource("escape_divide_by_diamond").setDamageBypassesArmor());
+  public static final DamageSource DIVIDE_BY_DIAMOND = (new DamageSource("divide_by_diamond").bypassArmor());
+  public static final DamageSource ESCAPE_DIVIDE_BY_DIAMOND = (new DamageSource("escape_divide_by_diamond").bypassArmor());
 
   public ItemUnstableIngot(Properties properties) {
     super(properties);
@@ -42,10 +44,10 @@ public class ItemUnstableIngot extends Item implements IItemColored {
 
   @Override
 @OnlyIn(Dist.CLIENT)
-  public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+  public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
     if (Screen.hasShiftDown()){
-      tooltip.add(new StringTextComponent("The product of dividing iron by diamond,").mergeStyle(TextFormatting.AQUA));
-      tooltip.add(new StringTextComponent("handle with care").mergeStyle(TextFormatting.AQUA));
+      tooltip.add(new StringTextComponent("The product of dividing iron by diamond,").withStyle(TextFormatting.AQUA));
+      tooltip.add(new StringTextComponent("handle with care").withStyle(TextFormatting.AQUA));
     }
     if (!stack.hasTag()) {
       tooltip.add(new StringTextComponent("'Stable'"));
@@ -60,23 +62,23 @@ public class ItemUnstableIngot extends Item implements IItemColored {
 
     if (e.phase == TickEvent.Phase.START) return;
 
-    Container container = e.player.openContainer;
-    ContainerType<?> type = ObfuscationReflectionHelper.getPrivateValue(Container.class,container,"field_216965_e");
+    Container container = e.player.containerMenu;
+    ContainerType<?> type = ObfuscationReflectionHelper.getPrivateValue(Container.class,container,"menuType");
     if (type == null || !Config.ServerConfig.allowed_containers.get().contains(type.getRegistryName().toString()))return;
 
-    World world = e.player.world;
+    World world = e.player.level;
 
-    if (world.isRemote)return;
+    if (world.isClientSide)return;
     boolean explode = false;
 
-    List<Slot> inventorySlots = container.inventorySlots;
+    List<Slot> inventorySlots = container.slots;
     for (Slot slot : inventorySlots) {
-      ItemStack stack = slot.getStack();
+      ItemStack stack = slot.getItem();
       if (!(stack.getItem() instanceof ItemUnstableIngot) || !stack.hasTag() || slot instanceof CraftingResultSlot)
         continue;
       int timer = stack.getTag().getInt("timer");
       if (timer <= 0) {
-        slot.putStack(ItemStack.EMPTY);
+        slot.set(ItemStack.EMPTY);
         explode = true;
         continue;
       }
@@ -91,10 +93,10 @@ public class ItemUnstableIngot extends Item implements IItemColored {
   public static void onContainerClose(PlayerContainerEvent.Close e) {
     Container c = e.getContainer();
     boolean explode = false;
-    for (Slot slot : c.inventorySlots) {
-      ItemStack stack = slot.getStack();
+    for (Slot slot : c.slots) {
+      ItemStack stack = slot.getItem();
       if (!checkExplosion(stack) || slot instanceof CraftingResultSlot) continue;
-      slot.putStack(ItemStack.EMPTY);
+      slot.set(ItemStack.EMPTY);
       explode = true;
     }
     if (!explode) return;
@@ -113,9 +115,9 @@ public class ItemUnstableIngot extends Item implements IItemColored {
   }
 
   public static void boom(PlayerEntity player) {
-    World world = player.world;
-    world.createExplosion(null, player.getPosX(), player.getPosY(), player.getPosZ(), 1, Explosion.Mode.NONE);
-    player.attackEntityFrom(DIVIDE_BY_DIAMOND, 100);
+    World world = player.level;
+    world.explode(null, player.getX(), player.getY(), player.getZ(), 1, Explosion.Mode.NONE);
+    player.hurt(DIVIDE_BY_DIAMOND, 100);
   }
 
   @Override

@@ -20,6 +20,8 @@ import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.minecraft.item.Item.Properties;
+
 public class ItemUnstableHoe extends HoeItem {
   public ItemUnstableHoe(IItemTier material, int attackDamage,float speed, Properties properties) {
     super(material,attackDamage,speed,properties);
@@ -30,20 +32,20 @@ public class ItemUnstableHoe extends HoeItem {
    */
   @Nonnull
   @Override
-  public ActionResultType onItemUse(ItemUseContext context) {
-    World world = context.getWorld();
-    BlockPos blockpos = context.getPos();
+  public ActionResultType useOn(ItemUseContext context) {
+    World world = context.getLevel();
+    BlockPos blockpos = context.getClickedPos();
     int hook = net.minecraftforge.event.ForgeEventFactory.onHoeUse(context);
     if (hook != 0) return hook > 0 ? ActionResultType.SUCCESS : ActionResultType.FAIL;
-    if (context.getFace() != Direction.DOWN && world.isAirBlock(blockpos.up())) {
+    if (context.getClickedFace() != Direction.DOWN && world.isEmptyBlock(blockpos.above())) {
       Block block = UnstableTools.instance.manager.getConversionMap().get(world.getBlockState(blockpos).getBlock());
       if (block != null) {
         PlayerEntity playerentity = context.getPlayer();
-        world.playSound(playerentity, blockpos, SoundEvents.ITEM_HOE_TILL, SoundCategory.BLOCKS, 1.0F, 1.0F);
-        if (!world.isRemote) {
-          world.setBlockState(blockpos, block.getDefaultState(), 11);
+        world.playSound(playerentity, blockpos, SoundEvents.HOE_TILL, SoundCategory.BLOCKS, 1.0F, 1.0F);
+        if (!world.isClientSide) {
+          world.setBlock(blockpos, block.defaultBlockState(), 11);
           if (playerentity != null) {
-            context.getItem().damageItem(1, playerentity, (p_220043_1_) -> p_220043_1_.sendBreakAnimation(context.getHand()));
+            context.getItemInHand().hurtAndBreak(1, playerentity, (p_220043_1_) -> p_220043_1_.broadcastBreakEvent(context.getHand()));
           }
         }
         return ActionResultType.SUCCESS;

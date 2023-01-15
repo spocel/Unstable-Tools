@@ -38,6 +38,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import net.minecraft.item.Item.Properties;
+
 @Mod.EventBusSubscriber
 public class DivisionSignItem extends Item implements IItemColored {
 
@@ -84,15 +86,15 @@ public class DivisionSignItem extends Item implements IItemColored {
 
     @Override
     @Nonnull
-    public ActionResultType onItemUse(ItemUseContext ctx) {
+    public ActionResultType useOn(ItemUseContext ctx) {
         PlayerEntity player = ctx.getPlayer();
         Hand hand = ctx.getHand();
-        World world = player.world;
-        BlockPos pos = ctx.getPos();
-        if (hand == Hand.OFF_HAND || world.isRemote) return ActionResultType.FAIL;
+        World world = player.level;
+        BlockPos pos = ctx.getClickedPos();
+        if (hand == Hand.OFF_HAND || world.isClientSide) return ActionResultType.FAIL;
         Block block = world.getBlockState(pos).getBlock();
         if (block != Blocks.ENCHANTING_TABLE) return ActionResultType.FAIL;
-        long time = world.getWorldInfo().getDayTime() % 24000;
+        long time = world.getLevelData().getDayTime() % 24000;
 
         boolean correctTime = false;
         if (time <= 17500) message(player, new TranslationTextComponent("unstabletools.early"));
@@ -110,7 +112,7 @@ public class DivisionSignItem extends Item implements IItemColored {
         }
 
         if (!circle) message(player, new TranslationTextComponent("unstabletools.incomplete"));
-        boolean skyVisible = world.canBlockSeeSky(pos.up());
+        boolean skyVisible = world.canSeeSkyFromBelowWater(pos.above());
         if (!skyVisible) message(player, new TranslationTextComponent("unstabletools.nosky"));
 
         if (correctTime && circle && skyVisible) message(player, new TranslationTextComponent("unstabletools.ready"));
@@ -119,14 +121,14 @@ public class DivisionSignItem extends Item implements IItemColored {
     }
 
     private static void message(PlayerEntity player, ITextComponent component) {
-        player.sendMessage(component, Util.DUMMY_UUID);
+        player.sendMessage(component, Util.NIL_UUID);
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
         if (Screen.hasShiftDown() && this == UnstableTools.ObjectHolders.inactive_division_sign)
-            tooltip.add(new StringTextComponent("Drops from Wither").mergeStyle(TextFormatting.AQUA));
+            tooltip.add(new StringTextComponent("Drops from Wither").withStyle(TextFormatting.AQUA));
         if (this != UnstableTools.ObjectHolders.division_sign || !stack.hasTag()) return;
         tooltip.add(new StringTextComponent("Uses Left: " + stack.getTag().getInt("d")));
     }
@@ -136,12 +138,12 @@ public class DivisionSignItem extends Item implements IItemColored {
 
     @SubscribeEvent
     public static void onSacrifice(LivingDeathEvent e) {
-        if (!(e.getSource().getTrueSource() instanceof PlayerEntity)) return;
-        PlayerEntity player = (PlayerEntity) e.getSource().getTrueSource();
+        if (!(e.getSource().getEntity() instanceof PlayerEntity)) return;
+        PlayerEntity player = (PlayerEntity) e.getSource().getEntity();
         LivingEntity sacrifice = e.getEntityLiving();
-        World world = sacrifice.world;
-        BlockPos pos = sacrifice.getPosition();
-        if (!world.canBlockSeeSky(pos)) return;
+        World world = sacrifice.level;
+        BlockPos pos = sacrifice.blockPosition();
+        if (!world.canSeeSkyFromBelowWater(pos)) return;
         Block block = world.getBlockState(pos).getBlock();
         if (block != Blocks.ENCHANTING_TABLE) return;
 
@@ -153,10 +155,10 @@ public class DivisionSignItem extends Item implements IItemColored {
             }
         }
 
-        long time = world.getWorldInfo().getDayTime() % 24000;
+        long time = world.getLevelData().getDayTime() % 24000;
         if (time <= 17500 || time > 18500) return;
 
-        NonNullList<ItemStack> mainInventory = player.inventory.mainInventory;
+        NonNullList<ItemStack> mainInventory = player.inventory.items;
         for (int i = 0; i < mainInventory.size(); i++) {
             final ItemStack stack = mainInventory.get(i);
             if (stack.getItem() != UnstableTools.ObjectHolders.inactive_division_sign && stack.getItem() != UnstableTools.ObjectHolders.division_sign) continue;
@@ -164,10 +166,10 @@ public class DivisionSignItem extends Item implements IItemColored {
             newStack.getOrCreateTag().putInt("d", Config.ServerConfig.uses.get());
             mainInventory.set(i, newStack);
         }
-        if (!world.isRemote) {
+        if (!world.isClientSide) {
             LightningBoltEntity entity = EntityType.LIGHTNING_BOLT.create(world);
-            entity.moveForced(sacrifice.getPosX(), sacrifice.getPosY(), sacrifice.getPosZ());
-            world.addEntity(entity);
+            entity.moveTo(sacrifice.getX(), sacrifice.getY(), sacrifice.getZ());
+            world.addFreshEntity(entity);
         }
         if (ModList.get().isLoaded("cursedearth") && Config.ServerConfig.cursed_earth_integration.get()) {
             for (int x = pos.getX() - 7; x < pos.getX() + 8; x++)
@@ -177,7 +179,7 @@ public class DivisionSignItem extends Item implements IItemColored {
                         BlockPos pos1 = new BlockPos(x, y1, z);
                         Block block1 = world.getBlockState(pos1).getBlock();
                         if (block1 == Blocks.DIRT || block1 == Blocks.GRASS_BLOCK) {
-                            world.setBlockState(pos1, cursed_earth.getDefaultState());
+                            world.setBlockAndUpdate(pos1, cursed_earth.defaultBlockState());
                             break;
                         }
                     }
@@ -186,10 +188,10 @@ public class DivisionSignItem extends Item implements IItemColored {
     }
 
     @Override
-    public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
-        super.fillItemGroup(group, items);
+    public void fillItemCategory(ItemGroup group, NonNullList<ItemStack> items) {
+        super.fillItemCategory(group, items);
         if (this == UnstableTools.ObjectHolders.division_sign)
-        if (group == this.getGroup() || group == ItemGroup.SEARCH) {
+        if (group == this.getItemCategory() || group == ItemGroup.TAB_SEARCH) {
             ItemStack stack = new ItemStack(this);
             stack.getOrCreateTag().putInt("d",Config.ServerConfig.uses.get());
             items.add(stack);

@@ -38,7 +38,7 @@ public class BlockConversionProvider implements IDataProvider {
     }
 
     @Override
-    public void act(DirectoryCache cache) {
+    public void run(DirectoryCache cache) {
         Path path = this.generator.getOutputFolder();
         Set<ResourceLocation> set = Sets.newHashSet();
         registerRecipes((conversion) -> {
@@ -57,8 +57,8 @@ public class BlockConversionProvider implements IDataProvider {
     private static void saveRecipe(DirectoryCache cache, JsonObject cache2, Path recipeJson) {
         try {
             String s = GSON.toJson(cache2);
-            String s1 = HASH_FUNCTION.hashUnencodedChars(s).toString();
-            if (!Objects.equals(cache.getPreviousHash(recipeJson), s1) || !Files.exists(recipeJson)) {
+            String s1 = SHA1.hashUnencodedChars(s).toString();
+            if (!Objects.equals(cache.getHash(recipeJson), s1) || !Files.exists(recipeJson)) {
                 Files.createDirectories(recipeJson.getParent());
 
                 try (BufferedWriter bufferedwriter = Files.newBufferedWriter(recipeJson)) {
@@ -66,7 +66,7 @@ public class BlockConversionProvider implements IDataProvider {
                 }
             }
 
-            cache.recordHash(recipeJson, s1);
+            cache.putNew(recipeJson, s1);
         } catch (IOException ioexception) {
             LOGGER.error("Couldn't save block conversion {}", recipeJson, ioexception);
         }
@@ -115,7 +115,7 @@ public class BlockConversionProvider implements IDataProvider {
 
         for (DyeColor dyeColor : DyeColor.values()) {
             String name = dyeColor.name().toLowerCase(Locale.ROOT);
-            Block from = Registry.BLOCK.getOrDefault(new ResourceLocation(name+"_stained_glass"));
+            Block from = Registry.BLOCK.get(new ResourceLocation(name+"_stained_glass"));
             consumer.accept(BlockConversionBuilder.createBlockConversion(from,Blocks.GLASS,new ResourceLocation("stained_glass_"+name)));
         }
 

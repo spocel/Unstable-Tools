@@ -71,34 +71,34 @@ public class UnstableTools {
   public static class UnstableTier implements IItemTier {
 
     @Override
-    public int getMaxUses() {
+    public int getUses() {
       return 0;
     }
 
     @Override
-    public float getEfficiency() {
+    public float getSpeed() {
       return 8;
     }
 
     @Override
-    public float getAttackDamage() {
+    public float getAttackDamageBonus() {
       return 8;
     }
 
     @Override
-    public int getHarvestLevel() {
+    public int getLevel() {
       return 4;
     }
 
     @Override
-    public int getEnchantability() {
+    public int getEnchantmentValue() {
       return 25;
     }
 
     @Nonnull
     @Override
-    public Ingredient getRepairMaterial() {
-      return Ingredient.fromItems(unstable_ingot);
+    public Ingredient getRepairIngredient() {
+      return Ingredient.of(unstable_ingot);
     }
   }
 
@@ -109,30 +109,30 @@ public class UnstableTools {
     private static int[] array = new int[]{4, 7, 9, 4};
 
     @Override
-    public int getDurability(@Nonnull EquipmentSlotType slotIn) {
+    public int getDurabilityForSlot(@Nonnull EquipmentSlotType slotIn) {
       return 0;
     }
 
     @Override
-    public int getDamageReductionAmount(@Nonnull EquipmentSlotType slot) {
+    public int getDefenseForSlot(@Nonnull EquipmentSlotType slot) {
       return array[slot.getIndex()];
     }
 
     @Override
-    public int getEnchantability() {
+    public int getEnchantmentValue() {
       return 25;
     }
 
     @Nonnull
     @Override
-    public SoundEvent getSoundEvent() {
-      return SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND;
+    public SoundEvent getEquipSound() {
+      return SoundEvents.ARMOR_EQUIP_DIAMOND;
     }
 
     @Nonnull
     @Override
-    public Ingredient getRepairMaterial() {
-      return Ingredient.fromItems(unstable_ingot);
+    public Ingredient getRepairIngredient() {
+      return Ingredient.of(unstable_ingot);
     }
 
     @Nonnull
@@ -157,7 +157,7 @@ public class UnstableTools {
 
   public static ItemGroup creativeTab = new ItemGroup(MODID) {
     @Override
-    public ItemStack createIcon() {
+    public ItemStack makeIcon() {
       return new ItemStack(unstable_pickaxe);
     }
   };
@@ -167,7 +167,7 @@ public class UnstableTools {
     @SubscribeEvent
     public static void registerBlock(RegistryEvent.Register<Block> event) {
       IForgeRegistry<Block> registry = event.getRegistry();
-      register(new Block(Block.Properties.create(Material.IRON).hardnessAndResistance(5, 6000)) {
+      register(new Block(Block.Properties.of(Material.METAL).strength(5, 6000)) {
 
                  @Nullable
                  @Override
@@ -177,7 +177,7 @@ public class UnstableTools {
 
                  @Override
                  @OnlyIn(Dist.CLIENT)
-                 public boolean isSideInvisible(BlockState state, BlockState adjacentBlockState, Direction side) {
+                 public boolean skipRendering(BlockState state, BlockState adjacentBlockState, Direction side) {
                    return adjacentBlockState.getBlock() == this;
                  }
 
@@ -189,7 +189,7 @@ public class UnstableTools {
     public static void registerItems(RegistryEvent.Register<Item> event) {
       IForgeRegistry<Item> registry = event.getRegistry();
 
-      Item.Properties properties = new Item.Properties().group(creativeTab);
+      Item.Properties properties = new Item.Properties().tab(creativeTab);
 
       register(new ItemUnstableIngot(properties), "unstable_ingot", registry);
       register(new ItemUnstableShears(properties), "unstable_shears", registry);
@@ -230,7 +230,7 @@ public class UnstableTools {
     if (entity instanceof PlayerEntity) {
       PlayerEntity player = (PlayerEntity) entity;
       if (stack.getItem() instanceof ItemUnstableShears) {
-        player.addItemStackToInventory(stackToSpawn);
+        player.addItem(stackToSpawn);
       }
     }
   }
@@ -243,10 +243,10 @@ public class UnstableTools {
 
   private void onDrops(LivingDropsEvent event) {
     LivingEntity entity = event.getEntityLiving();
-    if (entity instanceof WitherEntity && event.getSource().getTrueSource() instanceof PlayerEntity) {
+    if (entity instanceof WitherEntity && event.getSource().getEntity() instanceof PlayerEntity) {
 
       ItemStack itemStackToDrop = new ItemStack(inactive_division_sign);
-      event.getDrops().add(new ItemEntity(entity.world, entity.getPosX(), entity.getPosY(), entity.getPosZ(), itemStackToDrop));
+      event.getDrops().add(new ItemEntity(entity.level, entity.getX(), entity.getY(), entity.getZ(), itemStackToDrop));
     }
   }
 

@@ -14,6 +14,8 @@ import javax.annotation.Nullable;
 import java.util.Set;
 
 //@Mod.EventBusSubscriber(modid = UnstableTools.MODID)
+import net.minecraft.item.Item.Properties;
+
 public class ItemUnstableShears extends ShearsItem {
 
   public ItemUnstableShears(Properties builder) {
@@ -40,7 +42,7 @@ public class ItemUnstableShears extends ShearsItem {
   }
 
   @Override
-  public boolean canHarvestBlock(BlockState block) {
+  public boolean isCorrectToolForDrops(BlockState block) {
     return true;
   }
 

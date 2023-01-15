@@ -17,6 +17,8 @@ import net.minecraftforge.common.ToolType;
 import javax.annotation.Nonnull;
 import java.util.Set;
 
+import net.minecraft.item.Item.Properties;
+
 public class ItemUnstableAxe extends AxeItem {
 
   public ItemUnstableAxe(IItemTier materialIn, float damage, float attackSpeed, Properties properties) {
@@ -33,18 +35,18 @@ public class ItemUnstableAxe extends AxeItem {
 
   @Override
   public void inventoryTick(ItemStack stack, World worldIn, Entity entity, int itemSlot, boolean isSelected) {
-    if (!isSelected || !(entity instanceof PlayerEntity) || worldIn.isRemote) return;
-    ((PlayerEntity) entity).getFoodStats().addStats(1, 0.2F);
+    if (!isSelected || !(entity instanceof PlayerEntity) || worldIn.isClientSide) return;
+    ((PlayerEntity) entity).getFoodData().eat(1, 0.2F);
   }
 
   @Override
   public boolean onLeftClickEntity(ItemStack stack, PlayerEntity player, Entity entity) {
     if (entity instanceof LivingEntity) {
       LivingEntity livingEntity = (LivingEntity) entity;
-      if (livingEntity.getCreatureAttribute() == CreatureAttribute.UNDEAD)
-        entity.attackEntityFrom(DamageSource.causePlayerDamage(player), 8);
+      if (livingEntity.getMobType() == CreatureAttribute.UNDEAD)
+        entity.hurt(DamageSource.playerAttack(player), 8);
       else livingEntity.heal(8);
-      player.addPotionEffect(new EffectInstance(Effects.HUNGER,20,4));
+      player.addEffect(new EffectInstance(Effects.HUNGER,20,4));
     }
     return true;
   }

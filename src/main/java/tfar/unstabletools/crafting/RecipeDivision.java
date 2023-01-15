@@ -24,7 +24,7 @@ public class RecipeDivision extends ShapedRecipe {
 
   public static ItemStack ingot;
   public RecipeDivision(ResourceLocation idIn) {
-super(idIn, MODID,1,3,NonNullList.from(Ingredient.EMPTY, Ingredient.fromItems(Items.IRON_INGOT), Ingredient.fromItems(division_sign), Ingredient.fromItems(Items.DIAMOND)),createIngot());
+super(idIn, MODID,1,3,NonNullList.of(Ingredient.EMPTY, Ingredient.of(Items.IRON_INGOT), Ingredient.of(division_sign), Ingredient.of(Items.DIAMOND)),createIngot());
   }
 
   public static ItemStack createIngot() {

@@ -13,6 +13,6 @@ public class Client {
   @SubscribeEvent
   public static void colors(ColorHandlerEvent.Item e) {
     UnstableTools.MOD_ITEMS.stream().filter(IItemColored.class::isInstance).forEach(item -> e.getItemColors().register(((IItemColored) item)::getColor, item));
-    RenderTypeLookup.setRenderLayer(UnstableTools.ObjectHolders.unstable_block, RenderType.getCutout());
+    RenderTypeLookup.setRenderLayer(UnstableTools.ObjectHolders.unstable_block, RenderType.cutout());
   }
 }
