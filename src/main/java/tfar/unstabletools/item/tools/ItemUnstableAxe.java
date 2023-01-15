@@ -1,4 +1,4 @@
-package tfar.unstabletools.tools;
+package tfar.unstabletools.item.tools;
 
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;

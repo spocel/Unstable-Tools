@@ -37,10 +37,6 @@ public class ConversionManager extends SimpleJsonResourceReloadListener {
             if (resourcelocation.getPath().startsWith("_")) continue; //Forge: filter anything beginning with "_" as it's used for metadata.
 
             try {
-                if (entry.getValue().isJsonObject() && !net.minecraftforge.common.crafting.CraftingHelper.processConditions(entry.getValue().getAsJsonObject(), "conditions")) {
-                    LOGGER.debug("Skipping loading conversion {} as it's conditions were not met", resourcelocation);
-                    continue;
-                }
                 Pair<Block,Block> blockPair = deserializeConversion(resourcelocation, GsonHelper.convertToJsonObject(entry.getValue(), "top element"));
                 if (blockPair == null) {
                     LOGGER.info("Skipping loading conversion {} as it is empty", resourcelocation);

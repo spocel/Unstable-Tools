@@ -5,6 +5,7 @@ import net.minecraft.data.tags.BlockTagsProvider;
 import net.minecraft.tags.BlockTags;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.Nullable;
+import tfar.unstabletools.init.ModBlocks;
 import tfar.unstabletools.UnstableTools;
 
 public class ModBlockTagsProvider extends BlockTagsProvider {
@@ -14,6 +15,6 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
 
     @Override
     protected void addTags() {
-        this.tag(BlockTags.MINEABLE_WITH_PICKAXE).add(UnstableTools.ObjectHolders.unstable_block);
+        this.tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.unstable_block);
     }
 }

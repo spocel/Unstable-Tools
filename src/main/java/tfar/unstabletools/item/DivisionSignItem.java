@@ -1,14 +1,13 @@
 package tfar.unstabletools.item;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
@@ -23,44 +22,37 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ObjectHolder;
-import tfar.unstabletools.UnstableTools;
 import tfar.unstabletools.crafting.Config;
+import tfar.unstabletools.init.ModItems;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
 @Mod.EventBusSubscriber
-public class DivisionSignItem extends Item implements IItemColored {
+public class DivisionSignItem extends StableDivisionSignItem {
 
-    private final boolean stable;
-
-    public DivisionSignItem(Properties properties, boolean stable) {
+    public DivisionSignItem(Item.Properties properties) {
         super(properties);
-        this.stable = stable;
-    }
-
-    @Override
-    public boolean hasContainerItem(ItemStack stack) {
-        return true;
     }
 
     @Override
     @Nonnull
-    public ItemStack getContainerItem(ItemStack stack) {
+    public ItemStack getCraftingRemainingItem(ItemStack stack) {
         return damage(stack.copy());
     }
 
     public ItemStack damage(ItemStack stack) {
-        if (stable) return stack;
         CompoundTag nbt = stack.getOrCreateTag();
         int d = nbt.getInt("d");
         d--;
@@ -68,18 +60,18 @@ public class DivisionSignItem extends Item implements IItemColored {
             nbt.putInt("d", d);
             return stack;
         } else {
-            return new ItemStack(UnstableTools.ObjectHolders.inactive_division_sign);
+            return new ItemStack(ModItems.inactive_division_sign);
         }
     }
 
     @Override
     public int getBarWidth(ItemStack stack) {
-        return (int) (13 * (Config.ServerConfig.uses.get() - stack.getOrCreateTag().getInt("d")) / (double)Config.ServerConfig.uses.get());
+        return (int) (13 * (Config.ServerConfig.uses.get() - stack.getOrCreateTag().getInt("d")) / (double) Config.ServerConfig.uses.get());
     }
 
     @Override
     public boolean isBarVisible(ItemStack stack) {
-        return this == UnstableTools.ObjectHolders.division_sign;
+        return this == ModItems.division_sign;
     }
 
     @Override
@@ -95,11 +87,11 @@ public class DivisionSignItem extends Item implements IItemColored {
         long time = world.getLevelData().getDayTime() % 24000;
 
         boolean correctTime = false;
-        if (time <= 17500) message(player, new TranslatableComponent("unstabletools.early"));
+        if (time <= 17500) message(player, Component.translatable("unstabletools.early"));
         else if (time <= 18500) {
-            message(player, new TranslatableComponent("unstabletools.ontime"));
+            message(player, Component.translatable("unstabletools.ontime"));
             correctTime = true;
-        } else message(player, new TranslatableComponent("unstabletools.late"));
+        } else message(player, Component.translatable("unstabletools.late"));
         boolean circle = true;
         for (int i = -1; i < 2; i++) {
             for (int j = -1; j < 2; j++) {
@@ -109,35 +101,35 @@ public class DivisionSignItem extends Item implements IItemColored {
             }
         }
 
-        if (!circle) message(player, new TranslatableComponent("unstabletools.incomplete"));
+        if (!circle) message(player, Component.translatable("unstabletools.incomplete"));
         boolean skyVisible = world.canSeeSkyFromBelowWater(pos.above());
-        if (!skyVisible) message(player, new TranslatableComponent("unstabletools.nosky"));
+        if (!skyVisible) message(player, Component.translatable("unstabletools.nosky"));
 
-        if (correctTime && circle && skyVisible) message(player, new TranslatableComponent("unstabletools.ready"));
+        if (correctTime && circle && skyVisible) message(player, Component.translatable("unstabletools.ready"));
 
         return InteractionResult.PASS;
     }
 
     private static void message(Player player, Component component) {
-        player.sendMessage(component, Util.NIL_UUID);
+        player.sendSystemMessage(component);
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
     public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-        if (Screen.hasShiftDown() && this == UnstableTools.ObjectHolders.inactive_division_sign)
-            tooltip.add(new TextComponent("Drops from Wither").withStyle(ChatFormatting.AQUA));
-        if (this != UnstableTools.ObjectHolders.division_sign || !stack.hasTag()) return;
-        tooltip.add(new TextComponent("Uses Left: " + stack.getTag().getInt("d")));
+        if (Screen.hasShiftDown() && this == ModItems.inactive_division_sign)
+            tooltip.add(Component.literal("Drops from Wither").withStyle(ChatFormatting.AQUA));
+        if (this != ModItems.division_sign || !stack.hasTag()) return;
+        tooltip.add(Component.literal("Uses Left: " + stack.getTag().getInt("d")));
     }
 
-    @ObjectHolder("cursedearth:cursed_earth")
+    @ObjectHolder(registryName = "minecraft:block", value = "cursedearth:cursed_earth")
     public static final Block cursed_earth = null;
 
     @SubscribeEvent
     public static void onSacrifice(LivingDeathEvent e) {
         if (!(e.getSource().getEntity() instanceof Player player)) return;
-        LivingEntity sacrifice = e.getEntityLiving();
+        LivingEntity sacrifice = e.getEntity();
         Level world = sacrifice.level;
         BlockPos pos = sacrifice.blockPosition();
         if (!world.canSeeSkyFromBelowWater(pos)) return;
@@ -158,8 +150,9 @@ public class DivisionSignItem extends Item implements IItemColored {
         NonNullList<ItemStack> mainInventory = player.getInventory().items;
         for (int i = 0; i < mainInventory.size(); i++) {
             final ItemStack stack = mainInventory.get(i);
-            if (stack.getItem() != UnstableTools.ObjectHolders.inactive_division_sign && stack.getItem() != UnstableTools.ObjectHolders.division_sign) continue;
-            ItemStack newStack = new ItemStack(UnstableTools.ObjectHolders.division_sign);
+            if (stack.getItem() != ModItems.inactive_division_sign && stack.getItem() != ModItems.division_sign)
+                continue;
+            ItemStack newStack = new ItemStack(ModItems.division_sign);
             newStack.getOrCreateTag().putInt("d", Config.ServerConfig.uses.get());
             mainInventory.set(i, newStack);
         }
@@ -174,8 +167,8 @@ public class DivisionSignItem extends Item implements IItemColored {
                     int y = world.getHeight(Heightmap.Types.WORLD_SURFACE, x, z) - 1;
                     for (int y1 = y + 7; y1 > y - 7; y1--) {
                         BlockPos pos1 = new BlockPos(x, y1, z);
-                        Block block1 = world.getBlockState(pos1).getBlock();
-                        if (block1 == Blocks.DIRT || block1 == Blocks.GRASS_BLOCK) {
+                        BlockState block1 = world.getBlockState(pos1);
+                        if (block1.is(BlockTags.DIRT)) {
                             world.setBlockAndUpdate(pos1, cursed_earth.defaultBlockState());
                             break;
                         }
@@ -187,17 +180,16 @@ public class DivisionSignItem extends Item implements IItemColored {
     @Override
     public void fillItemCategory(CreativeModeTab group, NonNullList<ItemStack> items) {
         super.fillItemCategory(group, items);
-        if (this == UnstableTools.ObjectHolders.division_sign)
-        if (group == this.getItemCategory() || group == CreativeModeTab.TAB_SEARCH) {
-            ItemStack stack = new ItemStack(this);
-            stack.getOrCreateTag().putInt("d",Config.ServerConfig.uses.get());
-            items.add(stack);
-        }
+        if (this == ModItems.division_sign)
+            if (group == this.getItemCategory() || group == CreativeModeTab.TAB_SEARCH) {
+                ItemStack stack = new ItemStack(this);
+                stack.getOrCreateTag().putInt("d", Config.ServerConfig.uses.get());
+                items.add(stack);
+            }
     }
 
     @Override
     public int getColor(ItemStack stack, int tintIndex) {
-        return this == UnstableTools.ObjectHolders.inactive_division_sign ? 0xff0000 : this == UnstableTools.ObjectHolders.division_sign ? 0xeedd00 : 0x00ff00;
+        return this == ModItems.inactive_division_sign ? 0xff0000 : 0xeedd00;
     }
-
 }

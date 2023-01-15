@@ -1,9 +1,11 @@
 package tfar.unstabletools.item;
 
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
-import tfar.unstabletools.crafting.Config;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.core.Registry;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -12,25 +14,18 @@ import net.minecraft.world.inventory.ResultSlot;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.ChatFormatting;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import tfar.unstabletools.crafting.Config;
 
 import javax.annotation.Nullable;
 import java.util.List;
-
-import net.minecraft.world.item.Item.Properties;
 
 @Mod.EventBusSubscriber
 public class ItemUnstableIngot extends Item implements IItemColored {
@@ -43,18 +38,17 @@ public class ItemUnstableIngot extends Item implements IItemColored {
   }
 
   @Override
-@OnlyIn(Dist.CLIENT)
   public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
     if (Screen.hasShiftDown()){
-      tooltip.add(new TextComponent("The product of dividing iron by diamond,").withStyle(ChatFormatting.AQUA));
-      tooltip.add(new TextComponent("handle with care").withStyle(ChatFormatting.AQUA));
+      tooltip.add(Component.literal("The product of dividing iron by diamond,").withStyle(ChatFormatting.AQUA));
+      tooltip.add(Component.literal("handle with care").withStyle(ChatFormatting.AQUA));
     }
     if (!stack.hasTag()) {
-      tooltip.add(new TextComponent("'Stable'"));
+      tooltip.add(Component.literal("'Stable'"));
       return;
     }
-    int timer = stack.getOrCreateTag().getInt("timer");
-    tooltip.add(new TextComponent("Time left: " + timer));
+    int timer = stack.getTag().getInt("timer");
+    tooltip.add(Component.literal("Time left: " + timer));
   }
 
   @SubscribeEvent
@@ -63,8 +57,14 @@ public class ItemUnstableIngot extends Item implements IItemColored {
     if (e.phase == TickEvent.Phase.START) return;
 
     AbstractContainerMenu container = e.player.containerMenu;
-    MenuType<?> type = ObfuscationReflectionHelper.getPrivateValue(AbstractContainerMenu.class,container,"menuType");
-    if (type == null || !Config.ServerConfig.allowed_containers.get().contains(type.getRegistryName().toString()))return;
+
+    try {
+      MenuType<?> type = container.getType();
+      if (!Config.ServerConfig.allowed_containers.get().contains(Registry.MENU.getKey(type).toString()))
+        return;
+    } catch (Exception ex) {
+      return;
+    }
 
     Level world = e.player.level;
 
@@ -100,13 +100,13 @@ public class ItemUnstableIngot extends Item implements IItemColored {
       explode = true;
     }
     if (!explode) return;
-    boom(e.getPlayer());
+    boom(e.getEntity());
   }
 
   @SubscribeEvent
   public static void onItemDrop(ItemTossEvent e) {
     Player p = e.getPlayer();
-    ItemEntity entityItem = e.getEntityItem();
+    ItemEntity entityItem = e.getEntity();
     ItemStack stack = entityItem.getItem();
     if (checkExplosion(stack)) {
       boom(p);

@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import net.minecraft.core.Registry;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;
@@ -30,21 +31,20 @@ public class BlockConversionProvider implements DataProvider {
 
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().create();
-    protected final DataGenerator generator;
+    protected final DataGenerator.PathProvider recipePathProvider;
 
-    public BlockConversionProvider(DataGenerator generatorIn) {
-        this.generator = generatorIn;
+    public BlockConversionProvider(DataGenerator generator) {
+        this.recipePathProvider = generator.createPathProvider(DataGenerator.Target.DATA_PACK, "recipes");
     }
 
     @Override
-    public void run(HashCache cache) {
-        Path path = this.generator.getOutputFolder();
+    public void run(CachedOutput cache) {
         Set<ResourceLocation> set = Sets.newHashSet();
         registerRecipes((conversion) -> {
             if (!set.add(conversion.getID())) {
-                throw new IllegalStateException("Duplicate conversion " + conversion.getID());
+                throw new IllegalStateException("Duplicate recipe " + conversion.getID());
             } else {
-                saveRecipe(cache, conversion.getRecipeJson(), path.resolve("data/" + conversion.getID().getNamespace() + "/"+ ConversionManager.BLOCK_CONVS +"/" + conversion.getID().getPath() + ".json"));
+                saveRecipe(cache, conversion.getRecipeJson(), this.recipePathProvider.json(conversion.getID()));
             }
         });
 
@@ -53,23 +53,12 @@ public class BlockConversionProvider implements DataProvider {
     /**
      * Saves a recipe to a file.
      */
-    private static void saveRecipe(HashCache cache, JsonObject cache2, Path recipeJson) {
+    private static void saveRecipe(CachedOutput cache, JsonObject json, Path path) {
         try {
-            String s = GSON.toJson(cache2);
-            String s1 = SHA1.hashUnencodedChars(s).toString();
-            if (!Objects.equals(cache.getHash(recipeJson), s1) || !Files.exists(recipeJson)) {
-                Files.createDirectories(recipeJson.getParent());
-
-                try (BufferedWriter bufferedwriter = Files.newBufferedWriter(recipeJson)) {
-                    bufferedwriter.write(s);
-                }
-            }
-
-            cache.putNew(recipeJson, s1);
+            DataProvider.saveStable(cache, json, path);
         } catch (IOException ioexception) {
-            LOGGER.error("Couldn't save block conversion {}", recipeJson, ioexception);
+            LOGGER.error("Couldn't save recipe {}", path, ioexception);
         }
-
     }
 
     @Override

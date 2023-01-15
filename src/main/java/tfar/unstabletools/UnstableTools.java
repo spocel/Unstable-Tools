@@ -1,27 +1,20 @@
 package tfar.unstabletools;
 
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.SimpleRecipeSerializer;
-import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.AddReloadListenerEvent;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -29,39 +22,18 @@ import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.IForgeRegistryEntry;
-import net.minecraftforge.registries.ObjectHolder;
+import net.minecraftforge.registries.RegisterEvent;
 import tfar.unstabletools.crafting.Config;
 import tfar.unstabletools.crafting.ConversionManager;
-import tfar.unstabletools.crafting.RecipeDivision;
 import tfar.unstabletools.datagen.Datagen;
-import tfar.unstabletools.item.DivisionSignItem;
-import tfar.unstabletools.item.ItemUnstableIngot;
-import tfar.unstabletools.tools.ItemUnstableAxe;
-import tfar.unstabletools.tools.ItemUnstableHoe;
-import tfar.unstabletools.tools.ItemUnstableShears;
-import tfar.unstabletools.tools.UnstableBowItem;
+import tfar.unstabletools.init.ModBlocks;
+import tfar.unstabletools.init.ModItems;
+import tfar.unstabletools.init.ModRecipeSerializer;
+import tfar.unstabletools.item.tools.ItemUnstableShears;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.HashSet;
-import java.util.Set;
 
 import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
-import static tfar.unstabletools.UnstableTools.ObjectHolders.*;
-
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorMaterial;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.FishingRodItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.PickaxeItem;
-import net.minecraft.world.item.ShovelItem;
-import net.minecraft.world.item.SwordItem;
-import net.minecraft.world.item.Tier;
 
 @Mod(value = UnstableTools.MODID)
 public class UnstableTools {
@@ -108,7 +80,7 @@ public class UnstableTools {
     @Nonnull
     @Override
     public Ingredient getRepairIngredient() {
-      return Ingredient.of(unstable_ingot);
+      return Ingredient.of(ModItems.unstable_ingot);
     }
   }
 
@@ -142,7 +114,7 @@ public class UnstableTools {
     @Nonnull
     @Override
     public Ingredient getRepairIngredient() {
-      return Ingredient.of(unstable_ingot);
+      return Ingredient.of(ModItems.unstable_ingot);
     }
 
     @Nonnull
@@ -163,71 +135,43 @@ public class UnstableTools {
   }
 
   public static final ArmorMaterial UNSTABLE_ARMOR = new UnstableArmorMaterial();
-  public static final Set<Item> MOD_ITEMS = new HashSet<>();
 
   public static CreativeModeTab creativeTab = new CreativeModeTab(MODID) {
     @Override
     public ItemStack makeIcon() {
-      return new ItemStack(unstable_pickaxe);
+      return new ItemStack(ModItems.unstable_pickaxe);
     }
   };
 
   @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
   public static class RegistryEvents {
     @SubscribeEvent
-    public static void registerBlock(RegistryEvent.Register<Block> event) {
-      IForgeRegistry<Block> registry = event.getRegistry();
-      register(new Block(Block.Properties.of(Material.METAL).strength(5, 6000).requiresCorrectToolForDrops()) {
+    public static void registerBlock(RegisterEvent event) {
+      event.register(Registry.BLOCK_REGISTRY, new ResourceLocation(MODID, "unstable_block"), () -> ModBlocks.unstable_block);
+      event.register(Registry.ITEM_REGISTRY, new ResourceLocation(MODID, "unstable_ingot"), () -> ModItems.unstable_ingot);
+      event.register(Registry.ITEM_REGISTRY, new ResourceLocation(MODID,"unstable_shears"), () -> ModItems.unstable_shears);
 
+      event.register(Registry.ITEM_REGISTRY,new ResourceLocation(MODID,"unstable_block"), () -> ModItems.unstable_block);
 
-                 @Override
-                 @OnlyIn(Dist.CLIENT)
-                 public boolean skipRendering(BlockState state, BlockState adjacentBlockState, Direction side) {
-                   return adjacentBlockState.getBlock() == this;
-                 }
+      event.register(Registry.ITEM_REGISTRY, new ResourceLocation(MODID, "unstable_axe"), () -> ModItems.unstable_axe);
+      event.register(Registry.ITEM_REGISTRY, new ResourceLocation(MODID,"unstable_shovel"), () -> ModItems.unstable_shovel);
+      event.register(Registry.ITEM_REGISTRY, new ResourceLocation(MODID,"unstable_pickaxe"), () -> ModItems.unstable_pickaxe);
+      event.register(Registry.ITEM_REGISTRY,new ResourceLocation(MODID,"unstable_sword"),() -> ModItems.unstable_sword);
+      event.register(Registry.ITEM_REGISTRY, new ResourceLocation(MODID,"unstable_hoe"), () -> ModItems.unstable_hoe);
 
-               }
-              , "unstable_block", registry);
-    }
+      event.register(Registry.ITEM_REGISTRY,new ResourceLocation(MODID, "unstable_fishing_rod"), () -> ModItems.unstable_fishing_rod);
+      event.register(Registry.ITEM_REGISTRY,new ResourceLocation(MODID,"unstable_bow"), () -> ModItems.unstable_bow);
 
-    @SubscribeEvent
-    public static void registerItems(RegistryEvent.Register<Item> event) {
-      IForgeRegistry<Item> registry = event.getRegistry();
+      event.register(Registry.ITEM_REGISTRY,new ResourceLocation(MODID, "unstable_helmet"), () -> ModItems.unstable_helmet);
+      event.register(Registry.ITEM_REGISTRY,new ResourceLocation(MODID, "unstable_chestplate"), () -> ModItems.unstable_chestplate);
+      event.register(Registry.ITEM_REGISTRY,new ResourceLocation(MODID,"unstable_leggings"),() -> ModItems.unstable_leggings);
+      event.register(Registry.ITEM_REGISTRY,new ResourceLocation(MODID,"unstable_boots"), () -> ModItems.unstable_boots);
+      event.register(Registry.ITEM_REGISTRY,new ResourceLocation(MODID,"inactive_division_sign"), () -> ModItems.inactive_division_sign);
+      event.register(Registry.ITEM_REGISTRY,new ResourceLocation(MODID,"division_sign"), () -> ModItems.division_sign);
+      event.register(Registry.ITEM_REGISTRY,new ResourceLocation(MODID,"stable_division_sign"), () -> ModItems.stable_division_sign);
 
-      Item.Properties properties = new Item.Properties().tab(creativeTab);
+      event.register(Registry.RECIPE_SERIALIZER_REGISTRY, new ResourceLocation(MODID,"division"), () -> ModRecipeSerializer.division);
 
-      register(new ItemUnstableIngot(properties), "unstable_ingot", registry);
-      register(new ItemUnstableShears(properties), "unstable_shears", registry);
-
-      register(new BlockItem(unstable_block, properties), unstable_block.getRegistryName().getPath(), registry);
-
-      register(new ItemUnstableAxe(UNSTABLE, 9, -3, properties), "unstable_axe", registry);
-      register(new ShovelItem(UNSTABLE, 3, -1.5f, properties), "unstable_spade", registry);
-      register(new PickaxeItem(UNSTABLE, 1, -2.8f, properties), "unstable_pickaxe", registry);
-      register(new SwordItem(UNSTABLE, 3, -2.4f, properties), "unstable_sword", registry);
-      register(new ItemUnstableHoe(UNSTABLE, -4,0, properties), "unstable_hoe", registry);
-
-      register(new FishingRodItem(properties), "unstable_fishing_rod", registry);
-      //register(new UnstablePaxelItem(1, -1, UNSTABLE, AxeItem.EFFECTIVE_ON, properties), "unstable_paxel", registry);
-      register(new UnstableBowItem(properties), "unstable_bow", registry);
-
-      register(new ArmorItem(UNSTABLE_ARMOR, EquipmentSlot.HEAD, properties), "unstable_helmet", registry);
-      register(new ArmorItem(UNSTABLE_ARMOR, EquipmentSlot.CHEST, properties), "unstable_chestplate", registry);
-      register(new ArmorItem(UNSTABLE_ARMOR, EquipmentSlot.LEGS, properties), "unstable_leggings", registry);
-      register(new ArmorItem(UNSTABLE_ARMOR, EquipmentSlot.FEET, properties), "unstable_boots", registry);
-      register(new DivisionSignItem(properties,false), "inactive_division_sign", registry);
-      register(new DivisionSignItem(properties,false), "division_sign", registry);
-      register(new DivisionSignItem(properties,true), "stable_division_sign", registry);
-    }
-
-    @SubscribeEvent
-    public static void registerSerials(RegistryEvent.Register<RecipeSerializer<?>> event) {
-      register(new SimpleRecipeSerializer<>(RecipeDivision::new), "division", event.getRegistry());
-    }
-
-    private static <T extends IForgeRegistryEntry<T>> void register(T obj, String name, IForgeRegistry<T> registry) {
-      registry.register(obj.setRegistryName(new ResourceLocation(MODID, name)));
-      if (obj instanceof Item) MOD_ITEMS.add((Item) obj);
     }
   }
 
@@ -247,23 +191,12 @@ public class UnstableTools {
   }
 
   private void onDrops(LivingDropsEvent event) {
-    LivingEntity entity = event.getEntityLiving();
+    LivingEntity entity = event.getEntity();
     if (entity instanceof WitherBoss && event.getSource().getEntity() instanceof Player) {
 
-      ItemStack itemStackToDrop = new ItemStack(inactive_division_sign);
+      ItemStack itemStackToDrop = new ItemStack(ModItems.inactive_division_sign);
       event.getDrops().add(new ItemEntity(entity.level, entity.getX(), entity.getY(), entity.getZ(), itemStackToDrop));
     }
   }
 
-  @ObjectHolder(MODID)
-  public static class ObjectHolders {
-    public static final Item unstable_ingot = null;
-    public static final Block unstable_block = null;
-    public static final Item inactive_division_sign = null;
-    public static final Item division_sign = null;
-    public static final Item stable_division_sign = null;
-    public static final Item unstable_pickaxe = null;
-    public static final Item unstable_hoe = null;
-    public static final RecipeSerializer<?> division = null;
-  }
 }

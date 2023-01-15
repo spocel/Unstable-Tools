@@ -1,6 +1,7 @@
 package tfar.unstabletools.crafting;
 
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.CraftingContainer;
@@ -11,11 +12,12 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.level.Level;
+import tfar.unstabletools.init.ModRecipeSerializer;
 
 import javax.annotation.Nonnull;
 
 import static tfar.unstabletools.UnstableTools.MODID;
-import static tfar.unstabletools.UnstableTools.ObjectHolders.*;
+import static tfar.unstabletools.init.ModItems.*;
 
 public class RecipeDivision extends ShapedRecipe {
 
@@ -41,7 +43,7 @@ super(idIn, MODID,1,3,NonNullList.of(Ingredient.EMPTY, Ingredient.of(Items.IRON_
     try {
       AbstractContainerMenu container = inv.menu;
       MenuType<?> type = container.getType();//this will throw on certain inventories
-      return Config.ServerConfig.allowed_containers.get().contains(type.getRegistryName().toString()) && super.matches(inv, worldIn);
+      return Config.ServerConfig.allowed_containers.get().contains(Registry.MENU.getKey(type).toString()) && super.matches(inv, worldIn);
       } catch (Exception ohno) {
         //ohno.printStackTrace();
         return false;
@@ -51,7 +53,7 @@ super(idIn, MODID,1,3,NonNullList.of(Ingredient.EMPTY, Ingredient.of(Items.IRON_
   @Nonnull
   @Override
   public RecipeSerializer<?> getSerializer() {
-    return division;
+    return ModRecipeSerializer.division;
   }
 }
 

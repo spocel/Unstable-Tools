@@ -1,4 +1,4 @@
-package tfar.unstabletools.tools;
+package tfar.unstabletools.item.tools;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ShearsItem;
