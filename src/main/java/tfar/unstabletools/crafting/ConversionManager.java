@@ -2,12 +2,12 @@ package tfar.unstabletools.crafting;
 
 import com.google.gson.*;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.block.Block;
-import net.minecraft.client.resources.JsonReloadListener;
-import net.minecraft.profiler.IProfiler;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import tfar.unstabletools.JSONUtils2;
@@ -15,7 +15,7 @@ import tfar.unstabletools.JSONUtils2;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ConversionManager extends JsonReloadListener {
+public class ConversionManager extends SimpleJsonResourceReloadListener {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
     private static final Logger LOGGER = LogManager.getLogger();
     private final Map<Block, Block> conversionMap = new HashMap<>();
@@ -27,7 +27,7 @@ public class ConversionManager extends JsonReloadListener {
         super(GSON,BLOCK_CONVS);
     }
 
-    protected void apply(Map<ResourceLocation, JsonElement> objectIn, IResourceManager resourceManagerIn, IProfiler profilerIn) {
+    protected void apply(Map<ResourceLocation, JsonElement> objectIn, ResourceManager resourceManagerIn, ProfilerFiller profilerIn) {
         this.someRecipesErrored = false;
 
         conversionMap.clear();
@@ -41,7 +41,7 @@ public class ConversionManager extends JsonReloadListener {
                     LOGGER.debug("Skipping loading conversion {} as it's conditions were not met", resourcelocation);
                     continue;
                 }
-                Pair<Block,Block> blockPair = deserializeConversion(resourcelocation, JSONUtils.convertToJsonObject(entry.getValue(), "top element"));
+                Pair<Block,Block> blockPair = deserializeConversion(resourcelocation, GsonHelper.convertToJsonObject(entry.getValue(), "top element"));
                 if (blockPair == null) {
                     LOGGER.info("Skipping loading conversion {} as it is empty", resourcelocation);
                     continue;

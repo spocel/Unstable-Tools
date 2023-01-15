@@ -1,13 +1,13 @@
 package tfar.unstabletools.mixin;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -23,17 +23,17 @@ public class BlockMixin {
     private static final ThreadLocal<Entity> entityThreadLocal = ThreadLocal.withInitial(() -> null);
     private static final ThreadLocal<ItemStack> itemStackThreadLocal = ThreadLocal.withInitial(() -> ItemStack.EMPTY);
 
-    @Inject(remap = false,method = "getDrops(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/server/ServerWorld;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/tileentity/TileEntity;Lnet/minecraft/entity/Entity;Lnet/minecraft/item/ItemStack;)Ljava/util/List;",at = @At("HEAD"))
+    @Inject(remap = false,method = "getDrops(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/item/ItemStack;)Ljava/util/List;",at = @At("HEAD"))
 
-    private static void interceptEntity(BlockState state, ServerWorld worldIn, BlockPos pos, TileEntity tileEntityIn, Entity entityIn, ItemStack stack, CallbackInfoReturnable<List<ItemStack>> cir) {
+    private static void interceptEntity(BlockState state, ServerLevel worldIn, BlockPos pos, BlockEntity tileEntityIn, Entity entityIn, ItemStack stack, CallbackInfoReturnable<List<ItemStack>> cir) {
         entityThreadLocal.set(entityIn);
         itemStackThreadLocal.set(stack);
     }
 
 
-    @Inject(method = "*(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/item/ItemStack;)V",
+    @Inject(method = "*(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/item/ItemStack;)V",
             at = @At("HEAD"))
-    private static void interceptDrops(World worldIn, BlockPos pos, ItemStack stackToSpawn, CallbackInfo ci) {
+    private static void interceptDrops(Level worldIn, BlockPos pos, ItemStack stackToSpawn, CallbackInfo ci) {
         UnstableTools.onBlockDrops(worldIn,pos,stackToSpawn,entityThreadLocal.get(),itemStackThreadLocal.get());
     }
 }

@@ -3,16 +3,15 @@ package tfar.unstabletools.datagen;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.minecraft.advancements.Advancement;
-import net.minecraft.advancements.criterion.ImpossibleTrigger;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.data.*;
-import net.minecraft.item.DyeColor;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.core.Registry;
+import net.minecraft.data.DataGenerator;
+import net.minecraft.data.DataProvider;
+import net.minecraft.data.HashCache;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import tfar.unstabletools.crafting.ConversionManager;
@@ -26,7 +25,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
-public class BlockConversionProvider implements IDataProvider {
+public class BlockConversionProvider implements DataProvider {
 
 
     private static final Logger LOGGER = LogManager.getLogger();
@@ -38,7 +37,7 @@ public class BlockConversionProvider implements IDataProvider {
     }
 
     @Override
-    public void run(DirectoryCache cache) {
+    public void run(HashCache cache) {
         Path path = this.generator.getOutputFolder();
         Set<ResourceLocation> set = Sets.newHashSet();
         registerRecipes((conversion) -> {
@@ -54,7 +53,7 @@ public class BlockConversionProvider implements IDataProvider {
     /**
      * Saves a recipe to a file.
      */
-    private static void saveRecipe(DirectoryCache cache, JsonObject cache2, Path recipeJson) {
+    private static void saveRecipe(HashCache cache, JsonObject cache2, Path recipeJson) {
         try {
             String s = GSON.toJson(cache2);
             String s1 = SHA1.hashUnencodedChars(s).toString();
@@ -120,7 +119,7 @@ public class BlockConversionProvider implements IDataProvider {
         }
 
         consumer.accept(BlockConversionBuilder.createBlockConversion(Blocks.FARMLAND, Blocks.DIRT));
-        consumer.accept(BlockConversionBuilder.createBlockConversion(Blocks.GRASS_PATH, Blocks.GRASS_BLOCK));
+        //consumer.accept(BlockConversionBuilder.createBlockConversion(Blocks.GRASS_PATH, Blocks.GRASS_BLOCK));
         consumer.accept(BlockConversionBuilder.createBlockConversion(Blocks.DIRT, Blocks.GRASS_BLOCK,new ResourceLocation("grass_block_2")));
         consumer.accept(BlockConversionBuilder.createBlockConversion(Blocks.DEAD_BUSH, Blocks.OAK_SAPLING));
     }

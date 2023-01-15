@@ -3,10 +3,10 @@ package tfar.unstabletools;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-import net.minecraft.block.Block;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.Registry;
 
 public class JSONUtils2 {
 
@@ -17,7 +17,7 @@ public class JSONUtils2 {
                 return new JsonSyntaxException("Expected " + memberName + " to be a block, was unknown string '" + s + "'");
             });
         } else {
-            throw new JsonSyntaxException("Expected " + memberName + " to be a block, was " + JSONUtils.getType(json));
+            throw new JsonSyntaxException("Expected " + memberName + " to be a block, was " + GsonHelper.getType(json));
         }
     }
 

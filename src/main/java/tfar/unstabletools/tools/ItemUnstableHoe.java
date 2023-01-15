@@ -1,29 +1,22 @@
 package tfar.unstabletools.tools;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.HoeItem;
-import net.minecraft.item.IItemTier;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.HoeItem;
+import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import tfar.unstabletools.UnstableTools;
 
 import javax.annotation.Nonnull;
-import java.util.HashMap;
-import java.util.Map;
-
-import net.minecraft.item.Item.Properties;
 
 public class ItemUnstableHoe extends HoeItem {
-  public ItemUnstableHoe(IItemTier material, int attackDamage,float speed, Properties properties) {
+  public ItemUnstableHoe(Tier material, int attackDamage,float speed, Properties properties) {
     super(material,attackDamage,speed,properties);
   }
 
@@ -32,25 +25,25 @@ public class ItemUnstableHoe extends HoeItem {
    */
   @Nonnull
   @Override
-  public ActionResultType useOn(ItemUseContext context) {
-    World world = context.getLevel();
+  public InteractionResult useOn(UseOnContext context) {
+    Level world = context.getLevel();
     BlockPos blockpos = context.getClickedPos();
     int hook = net.minecraftforge.event.ForgeEventFactory.onHoeUse(context);
-    if (hook != 0) return hook > 0 ? ActionResultType.SUCCESS : ActionResultType.FAIL;
+    if (hook != 0) return hook > 0 ? InteractionResult.SUCCESS : InteractionResult.FAIL;
     if (context.getClickedFace() != Direction.DOWN && world.isEmptyBlock(blockpos.above())) {
       Block block = UnstableTools.instance.manager.getConversionMap().get(world.getBlockState(blockpos).getBlock());
       if (block != null) {
-        PlayerEntity playerentity = context.getPlayer();
-        world.playSound(playerentity, blockpos, SoundEvents.HOE_TILL, SoundCategory.BLOCKS, 1.0F, 1.0F);
+        Player playerentity = context.getPlayer();
+        world.playSound(playerentity, blockpos, SoundEvents.HOE_TILL, SoundSource.BLOCKS, 1.0F, 1.0F);
         if (!world.isClientSide) {
           world.setBlock(blockpos, block.defaultBlockState(), 11);
           if (playerentity != null) {
             context.getItemInHand().hurtAndBreak(1, playerentity, (p_220043_1_) -> p_220043_1_.broadcastBreakEvent(context.getHand()));
           }
         }
-        return ActionResultType.SUCCESS;
+        return InteractionResult.SUCCESS;
       }
     }
-    return ActionResultType.PASS;
+    return InteractionResult.PASS;
   }
 }

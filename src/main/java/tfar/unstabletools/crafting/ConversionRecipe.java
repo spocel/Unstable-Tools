@@ -1,6 +1,6 @@
 package tfar.unstabletools.crafting;
 
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 
 public class ConversionRecipe {
 

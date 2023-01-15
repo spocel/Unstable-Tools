@@ -1,29 +1,29 @@
 package tfar.unstabletools.item;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.LightningBoltEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.Util;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
-import net.minecraft.world.gen.Heightmap;
+import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -37,8 +37,6 @@ import tfar.unstabletools.crafting.Config;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
-
-import net.minecraft.item.Item.Properties;
 
 @Mod.EventBusSubscriber
 public class DivisionSignItem extends Item implements IItemColored {
@@ -63,7 +61,7 @@ public class DivisionSignItem extends Item implements IItemColored {
 
     public ItemStack damage(ItemStack stack) {
         if (stable) return stack;
-        CompoundNBT nbt = stack.getOrCreateTag();
+        CompoundTag nbt = stack.getOrCreateTag();
         int d = nbt.getInt("d");
         d--;
         if (d > 0) {
@@ -75,33 +73,33 @@ public class DivisionSignItem extends Item implements IItemColored {
     }
 
     @Override
-    public double getDurabilityForDisplay(ItemStack stack) {
-        return (Config.ServerConfig.uses.get() - stack.getOrCreateTag().getInt("d")) / (double)Config.ServerConfig.uses.get();
+    public int getBarWidth(ItemStack stack) {
+        return (int) (13 * (Config.ServerConfig.uses.get() - stack.getOrCreateTag().getInt("d")) / (double)Config.ServerConfig.uses.get());
     }
 
     @Override
-    public boolean showDurabilityBar(ItemStack stack) {
+    public boolean isBarVisible(ItemStack stack) {
         return this == UnstableTools.ObjectHolders.division_sign;
     }
 
     @Override
     @Nonnull
-    public ActionResultType useOn(ItemUseContext ctx) {
-        PlayerEntity player = ctx.getPlayer();
-        Hand hand = ctx.getHand();
-        World world = player.level;
+    public InteractionResult useOn(UseOnContext ctx) {
+        Player player = ctx.getPlayer();
+        InteractionHand hand = ctx.getHand();
+        Level world = player.level;
         BlockPos pos = ctx.getClickedPos();
-        if (hand == Hand.OFF_HAND || world.isClientSide) return ActionResultType.FAIL;
+        if (hand == InteractionHand.OFF_HAND || world.isClientSide) return InteractionResult.FAIL;
         Block block = world.getBlockState(pos).getBlock();
-        if (block != Blocks.ENCHANTING_TABLE) return ActionResultType.FAIL;
+        if (block != Blocks.ENCHANTING_TABLE) return InteractionResult.FAIL;
         long time = world.getLevelData().getDayTime() % 24000;
 
         boolean correctTime = false;
-        if (time <= 17500) message(player, new TranslationTextComponent("unstabletools.early"));
+        if (time <= 17500) message(player, new TranslatableComponent("unstabletools.early"));
         else if (time <= 18500) {
-            message(player, new TranslationTextComponent("unstabletools.ontime"));
+            message(player, new TranslatableComponent("unstabletools.ontime"));
             correctTime = true;
-        } else message(player, new TranslationTextComponent("unstabletools.late"));
+        } else message(player, new TranslatableComponent("unstabletools.late"));
         boolean circle = true;
         for (int i = -1; i < 2; i++) {
             for (int j = -1; j < 2; j++) {
@@ -111,26 +109,26 @@ public class DivisionSignItem extends Item implements IItemColored {
             }
         }
 
-        if (!circle) message(player, new TranslationTextComponent("unstabletools.incomplete"));
+        if (!circle) message(player, new TranslatableComponent("unstabletools.incomplete"));
         boolean skyVisible = world.canSeeSkyFromBelowWater(pos.above());
-        if (!skyVisible) message(player, new TranslationTextComponent("unstabletools.nosky"));
+        if (!skyVisible) message(player, new TranslatableComponent("unstabletools.nosky"));
 
-        if (correctTime && circle && skyVisible) message(player, new TranslationTextComponent("unstabletools.ready"));
+        if (correctTime && circle && skyVisible) message(player, new TranslatableComponent("unstabletools.ready"));
 
-        return ActionResultType.PASS;
+        return InteractionResult.PASS;
     }
 
-    private static void message(PlayerEntity player, ITextComponent component) {
+    private static void message(Player player, Component component) {
         player.sendMessage(component, Util.NIL_UUID);
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
         if (Screen.hasShiftDown() && this == UnstableTools.ObjectHolders.inactive_division_sign)
-            tooltip.add(new StringTextComponent("Drops from Wither").withStyle(TextFormatting.AQUA));
+            tooltip.add(new TextComponent("Drops from Wither").withStyle(ChatFormatting.AQUA));
         if (this != UnstableTools.ObjectHolders.division_sign || !stack.hasTag()) return;
-        tooltip.add(new StringTextComponent("Uses Left: " + stack.getTag().getInt("d")));
+        tooltip.add(new TextComponent("Uses Left: " + stack.getTag().getInt("d")));
     }
 
     @ObjectHolder("cursedearth:cursed_earth")
@@ -138,10 +136,9 @@ public class DivisionSignItem extends Item implements IItemColored {
 
     @SubscribeEvent
     public static void onSacrifice(LivingDeathEvent e) {
-        if (!(e.getSource().getEntity() instanceof PlayerEntity)) return;
-        PlayerEntity player = (PlayerEntity) e.getSource().getEntity();
+        if (!(e.getSource().getEntity() instanceof Player player)) return;
         LivingEntity sacrifice = e.getEntityLiving();
-        World world = sacrifice.level;
+        Level world = sacrifice.level;
         BlockPos pos = sacrifice.blockPosition();
         if (!world.canSeeSkyFromBelowWater(pos)) return;
         Block block = world.getBlockState(pos).getBlock();
@@ -158,7 +155,7 @@ public class DivisionSignItem extends Item implements IItemColored {
         long time = world.getLevelData().getDayTime() % 24000;
         if (time <= 17500 || time > 18500) return;
 
-        NonNullList<ItemStack> mainInventory = player.inventory.items;
+        NonNullList<ItemStack> mainInventory = player.getInventory().items;
         for (int i = 0; i < mainInventory.size(); i++) {
             final ItemStack stack = mainInventory.get(i);
             if (stack.getItem() != UnstableTools.ObjectHolders.inactive_division_sign && stack.getItem() != UnstableTools.ObjectHolders.division_sign) continue;
@@ -167,14 +164,14 @@ public class DivisionSignItem extends Item implements IItemColored {
             mainInventory.set(i, newStack);
         }
         if (!world.isClientSide) {
-            LightningBoltEntity entity = EntityType.LIGHTNING_BOLT.create(world);
+            LightningBolt entity = EntityType.LIGHTNING_BOLT.create(world);
             entity.moveTo(sacrifice.getX(), sacrifice.getY(), sacrifice.getZ());
             world.addFreshEntity(entity);
         }
         if (ModList.get().isLoaded("cursedearth") && Config.ServerConfig.cursed_earth_integration.get()) {
             for (int x = pos.getX() - 7; x < pos.getX() + 8; x++)
                 for (int z = pos.getZ() - 7; z < pos.getZ() + 8; z++) {
-                    int y = world.getHeight(Heightmap.Type.WORLD_SURFACE, x, z) - 1;
+                    int y = world.getHeight(Heightmap.Types.WORLD_SURFACE, x, z) - 1;
                     for (int y1 = y + 7; y1 > y - 7; y1--) {
                         BlockPos pos1 = new BlockPos(x, y1, z);
                         Block block1 = world.getBlockState(pos1).getBlock();
@@ -188,10 +185,10 @@ public class DivisionSignItem extends Item implements IItemColored {
     }
 
     @Override
-    public void fillItemCategory(ItemGroup group, NonNullList<ItemStack> items) {
+    public void fillItemCategory(CreativeModeTab group, NonNullList<ItemStack> items) {
         super.fillItemCategory(group, items);
         if (this == UnstableTools.ObjectHolders.division_sign)
-        if (group == this.getItemCategory() || group == ItemGroup.TAB_SEARCH) {
+        if (group == this.getItemCategory() || group == CreativeModeTab.TAB_SEARCH) {
             ItemStack stack = new ItemStack(this);
             stack.getOrCreateTag().putInt("d",Config.ServerConfig.uses.get());
             items.add(stack);

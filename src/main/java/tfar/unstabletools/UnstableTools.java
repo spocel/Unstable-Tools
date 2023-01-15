@@ -1,27 +1,25 @@
 package tfar.unstabletools;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.boss.WitherEntity;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.*;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.item.crafting.SpecialRecipeSerializer;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.boss.wither.WitherBoss;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.SimpleRecipeSerializer;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.ToolType;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
@@ -53,6 +51,18 @@ import java.util.Set;
 import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
 import static tfar.unstabletools.UnstableTools.ObjectHolders.*;
 
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.FishingRodItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.PickaxeItem;
+import net.minecraft.world.item.ShovelItem;
+import net.minecraft.world.item.SwordItem;
+import net.minecraft.world.item.Tier;
+
 @Mod(value = UnstableTools.MODID)
 public class UnstableTools {
 
@@ -68,7 +78,7 @@ public class UnstableTools {
 
   public static final String MODID = "unstabletools";
 
-  public static class UnstableTier implements IItemTier {
+  public static class UnstableTier implements Tier {
 
     @Override
     public int getUses() {
@@ -102,19 +112,19 @@ public class UnstableTools {
     }
   }
 
-  public static final IItemTier UNSTABLE = new UnstableTier();
+  public static final Tier UNSTABLE = new UnstableTier();
 
-  public static class UnstableArmorMaterial implements IArmorMaterial {
+  public static class UnstableArmorMaterial implements ArmorMaterial {
 
     private static int[] array = new int[]{4, 7, 9, 4};
 
     @Override
-    public int getDurabilityForSlot(@Nonnull EquipmentSlotType slotIn) {
+    public int getDurabilityForSlot(@Nonnull EquipmentSlot slotIn) {
       return 0;
     }
 
     @Override
-    public int getDefenseForSlot(@Nonnull EquipmentSlotType slot) {
+    public int getDefenseForSlot(@Nonnull EquipmentSlot slot) {
       return array[slot.getIndex()];
     }
 
@@ -152,10 +162,10 @@ public class UnstableTools {
     }
   }
 
-  public static final IArmorMaterial UNSTABLE_ARMOR = new UnstableArmorMaterial();
+  public static final ArmorMaterial UNSTABLE_ARMOR = new UnstableArmorMaterial();
   public static final Set<Item> MOD_ITEMS = new HashSet<>();
 
-  public static ItemGroup creativeTab = new ItemGroup(MODID) {
+  public static CreativeModeTab creativeTab = new CreativeModeTab(MODID) {
     @Override
     public ItemStack makeIcon() {
       return new ItemStack(unstable_pickaxe);
@@ -167,13 +177,8 @@ public class UnstableTools {
     @SubscribeEvent
     public static void registerBlock(RegistryEvent.Register<Block> event) {
       IForgeRegistry<Block> registry = event.getRegistry();
-      register(new Block(Block.Properties.of(Material.METAL).strength(5, 6000)) {
+      register(new Block(Block.Properties.of(Material.METAL).strength(5, 6000).requiresCorrectToolForDrops()) {
 
-                 @Nullable
-                 @Override
-                 public ToolType getHarvestTool(BlockState state) {
-                   return ToolType.PICKAXE;
-                 }
 
                  @Override
                  @OnlyIn(Dist.CLIENT)
@@ -206,18 +211,18 @@ public class UnstableTools {
       //register(new UnstablePaxelItem(1, -1, UNSTABLE, AxeItem.EFFECTIVE_ON, properties), "unstable_paxel", registry);
       register(new UnstableBowItem(properties), "unstable_bow", registry);
 
-      register(new ArmorItem(UNSTABLE_ARMOR, EquipmentSlotType.HEAD, properties), "unstable_helmet", registry);
-      register(new ArmorItem(UNSTABLE_ARMOR, EquipmentSlotType.CHEST, properties), "unstable_chestplate", registry);
-      register(new ArmorItem(UNSTABLE_ARMOR, EquipmentSlotType.LEGS, properties), "unstable_leggings", registry);
-      register(new ArmorItem(UNSTABLE_ARMOR, EquipmentSlotType.FEET, properties), "unstable_boots", registry);
+      register(new ArmorItem(UNSTABLE_ARMOR, EquipmentSlot.HEAD, properties), "unstable_helmet", registry);
+      register(new ArmorItem(UNSTABLE_ARMOR, EquipmentSlot.CHEST, properties), "unstable_chestplate", registry);
+      register(new ArmorItem(UNSTABLE_ARMOR, EquipmentSlot.LEGS, properties), "unstable_leggings", registry);
+      register(new ArmorItem(UNSTABLE_ARMOR, EquipmentSlot.FEET, properties), "unstable_boots", registry);
       register(new DivisionSignItem(properties,false), "inactive_division_sign", registry);
       register(new DivisionSignItem(properties,false), "division_sign", registry);
       register(new DivisionSignItem(properties,true), "stable_division_sign", registry);
     }
 
     @SubscribeEvent
-    public static void registerSerials(RegistryEvent.Register<IRecipeSerializer<?>> event) {
-      register(new SpecialRecipeSerializer<>(RecipeDivision::new), "division", event.getRegistry());
+    public static void registerSerials(RegistryEvent.Register<RecipeSerializer<?>> event) {
+      register(new SimpleRecipeSerializer<>(RecipeDivision::new), "division", event.getRegistry());
     }
 
     private static <T extends IForgeRegistryEntry<T>> void register(T obj, String name, IForgeRegistry<T> registry) {
@@ -226,9 +231,9 @@ public class UnstableTools {
     }
   }
 
-  public static void onBlockDrops(World worldIn, BlockPos pos, ItemStack stackToSpawn, Entity entity, ItemStack stack) {
-    if (entity instanceof PlayerEntity) {
-      PlayerEntity player = (PlayerEntity) entity;
+  public static void onBlockDrops(Level worldIn, BlockPos pos, ItemStack stackToSpawn, Entity entity, ItemStack stack) {
+    if (entity instanceof Player) {
+      Player player = (Player) entity;
       if (stack.getItem() instanceof ItemUnstableShears) {
         player.addItem(stackToSpawn);
       }
@@ -243,7 +248,7 @@ public class UnstableTools {
 
   private void onDrops(LivingDropsEvent event) {
     LivingEntity entity = event.getEntityLiving();
-    if (entity instanceof WitherEntity && event.getSource().getEntity() instanceof PlayerEntity) {
+    if (entity instanceof WitherBoss && event.getSource().getEntity() instanceof Player) {
 
       ItemStack itemStackToDrop = new ItemStack(inactive_division_sign);
       event.getDrops().add(new ItemEntity(entity.level, entity.getX(), entity.getY(), entity.getZ(), itemStackToDrop));
@@ -259,6 +264,6 @@ public class UnstableTools {
     public static final Item stable_division_sign = null;
     public static final Item unstable_pickaxe = null;
     public static final Item unstable_hoe = null;
-    public static final IRecipeSerializer<?> division = null;
+    public static final RecipeSerializer<?> division = null;
   }
 }

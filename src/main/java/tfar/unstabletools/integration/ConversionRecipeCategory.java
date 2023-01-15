@@ -7,16 +7,18 @@ import mezz.jei.api.gui.drawable.IDrawableStatic;
 import mezz.jei.api.gui.ingredient.IGuiItemStackGroup;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
 import tfar.unstabletools.UnstableTools;
 import tfar.unstabletools.crafting.ConversionRecipe;
 
 public class ConversionRecipeCategory implements IRecipeCategory<ConversionRecipe> {
 
-    private final String localizedName;
+    private final TranslatableComponent localizedName;
     private final IDrawableStatic background;
     private final IDrawable icon;
 
@@ -24,7 +26,7 @@ public class ConversionRecipeCategory implements IRecipeCategory<ConversionRecip
 
 
     public ConversionRecipeCategory(IGuiHelper guiHelper) {
-        this.localizedName = I18n.get("gui.jei.unstabletools.category.block_conversions");
+        this.localizedName = new TranslatableComponent("gui.jei.unstabletools.category.block_conversions");
         this.background = guiHelper.drawableBuilder(RECIPE_GUI_VANILLA, 0, 0, 101, 18).build();
         this.icon = guiHelper.createDrawableIngredient(new ItemStack(UnstableTools.ObjectHolders.unstable_hoe));
     }
@@ -35,12 +37,17 @@ public class ConversionRecipeCategory implements IRecipeCategory<ConversionRecip
     }
 
     @Override
+    public RecipeType<ConversionRecipe> getRecipeType() {
+        return IRecipeCategory.super.getRecipeType();
+    }
+
+    @Override
     public Class<? extends ConversionRecipe> getRecipeClass() {
         return ConversionRecipe.class;
     }
 
     @Override
-    public String getTitle() {
+    public Component getTitle() {
         return localizedName;
     }
 

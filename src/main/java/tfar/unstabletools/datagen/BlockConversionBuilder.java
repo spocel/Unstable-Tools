@@ -1,9 +1,9 @@
 package tfar.unstabletools.datagen;
 
 import com.google.gson.JsonObject;
-import net.minecraft.block.Block;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.Registry;
 
 public class BlockConversionBuilder {
 

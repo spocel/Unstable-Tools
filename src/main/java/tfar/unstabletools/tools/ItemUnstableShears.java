@@ -1,39 +1,15 @@
 package tfar.unstabletools.tools;
 
-import com.google.common.collect.Sets;
-import net.minecraft.block.BlockState;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ShearsItem;
-import net.minecraftforge.common.ToolType;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.Set;
-
-//@Mod.EventBusSubscriber(modid = UnstableTools.MODID)
-import net.minecraft.item.Item.Properties;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ShearsItem;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class ItemUnstableShears extends ShearsItem {
 
   public ItemUnstableShears(Properties builder) {
     super(builder);
-  }
-
-  @Override
-  public int getHarvestLevel(ItemStack stack,@Nonnull ToolType tool, @Nullable PlayerEntity player, @Nullable BlockState blockState) {
-    return 3;
-  }
-
-  private static final Set<ToolType> pickaxe = Sets.newHashSet(ToolType.PICKAXE);
-
-
-  @Nonnull
-  @Override
-  public Set<ToolType> getToolTypes(ItemStack stack) {
-    return pickaxe;
   }
 
   @Override

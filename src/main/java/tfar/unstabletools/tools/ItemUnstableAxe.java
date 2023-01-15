@@ -1,52 +1,37 @@
 package tfar.unstabletools.tools;
 
-import com.google.common.collect.Sets;
-import net.minecraft.entity.CreatureAttribute;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.AxeItem;
-import net.minecraft.item.IItemTier;
-import net.minecraft.item.ItemStack;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
-import net.minecraft.util.DamageSource;
-import net.minecraft.world.World;
-import net.minecraftforge.common.ToolType;
-
-import javax.annotation.Nonnull;
-import java.util.Set;
-
-import net.minecraft.item.Item.Properties;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobType;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.AxeItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Tier;
+import net.minecraft.world.level.Level;
 
 public class ItemUnstableAxe extends AxeItem {
 
-  public ItemUnstableAxe(IItemTier materialIn, float damage, float attackSpeed, Properties properties) {
+  public ItemUnstableAxe(Tier materialIn, float damage, float attackSpeed, Properties properties) {
     super(materialIn, damage, attackSpeed, properties);
   }
 
-  private static final Set<ToolType> axe = Sets.newHashSet(ToolType.AXE);
-
-  @Nonnull
   @Override
-  public Set<ToolType> getToolTypes(ItemStack stack) {
-    return axe;
+  public void inventoryTick(ItemStack stack, Level worldIn, Entity entity, int itemSlot, boolean isSelected) {
+    if (!isSelected || !(entity instanceof Player) || worldIn.isClientSide) return;
+    ((Player) entity).getFoodData().eat(1, 0.2F);
   }
 
   @Override
-  public void inventoryTick(ItemStack stack, World worldIn, Entity entity, int itemSlot, boolean isSelected) {
-    if (!isSelected || !(entity instanceof PlayerEntity) || worldIn.isClientSide) return;
-    ((PlayerEntity) entity).getFoodData().eat(1, 0.2F);
-  }
-
-  @Override
-  public boolean onLeftClickEntity(ItemStack stack, PlayerEntity player, Entity entity) {
+  public boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity) {
     if (entity instanceof LivingEntity) {
       LivingEntity livingEntity = (LivingEntity) entity;
-      if (livingEntity.getMobType() == CreatureAttribute.UNDEAD)
+      if (livingEntity.getMobType() == MobType.UNDEAD)
         entity.hurt(DamageSource.playerAttack(player), 8);
       else livingEntity.heal(8);
-      player.addEffect(new EffectInstance(Effects.HUNGER,20,4));
+      player.addEffect(new MobEffectInstance(MobEffects.HUNGER,20,4));
     }
     return true;
   }

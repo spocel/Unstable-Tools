@@ -1,23 +1,24 @@
 package tfar.unstabletools.item;
 
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import tfar.unstabletools.crafting.Config;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.inventory.container.CraftingResultSlot;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.Explosion;
-import net.minecraft.world.World;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.ResultSlot;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.ChatFormatting;
+import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.TickEvent;
@@ -25,12 +26,11 @@ import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-import net.minecraft.item.Item.Properties;
+import net.minecraft.world.item.Item.Properties;
 
 @Mod.EventBusSubscriber
 public class ItemUnstableIngot extends Item implements IItemColored {
@@ -44,17 +44,17 @@ public class ItemUnstableIngot extends Item implements IItemColored {
 
   @Override
 @OnlyIn(Dist.CLIENT)
-  public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+  public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
     if (Screen.hasShiftDown()){
-      tooltip.add(new StringTextComponent("The product of dividing iron by diamond,").withStyle(TextFormatting.AQUA));
-      tooltip.add(new StringTextComponent("handle with care").withStyle(TextFormatting.AQUA));
+      tooltip.add(new TextComponent("The product of dividing iron by diamond,").withStyle(ChatFormatting.AQUA));
+      tooltip.add(new TextComponent("handle with care").withStyle(ChatFormatting.AQUA));
     }
     if (!stack.hasTag()) {
-      tooltip.add(new StringTextComponent("'Stable'"));
+      tooltip.add(new TextComponent("'Stable'"));
       return;
     }
     int timer = stack.getOrCreateTag().getInt("timer");
-    tooltip.add(new StringTextComponent("Time left: " + timer));
+    tooltip.add(new TextComponent("Time left: " + timer));
   }
 
   @SubscribeEvent
@@ -62,11 +62,11 @@ public class ItemUnstableIngot extends Item implements IItemColored {
 
     if (e.phase == TickEvent.Phase.START) return;
 
-    Container container = e.player.containerMenu;
-    ContainerType<?> type = ObfuscationReflectionHelper.getPrivateValue(Container.class,container,"menuType");
+    AbstractContainerMenu container = e.player.containerMenu;
+    MenuType<?> type = ObfuscationReflectionHelper.getPrivateValue(AbstractContainerMenu.class,container,"menuType");
     if (type == null || !Config.ServerConfig.allowed_containers.get().contains(type.getRegistryName().toString()))return;
 
-    World world = e.player.level;
+    Level world = e.player.level;
 
     if (world.isClientSide)return;
     boolean explode = false;
@@ -74,7 +74,7 @@ public class ItemUnstableIngot extends Item implements IItemColored {
     List<Slot> inventorySlots = container.slots;
     for (Slot slot : inventorySlots) {
       ItemStack stack = slot.getItem();
-      if (!(stack.getItem() instanceof ItemUnstableIngot) || !stack.hasTag() || slot instanceof CraftingResultSlot)
+      if (!(stack.getItem() instanceof ItemUnstableIngot) || !stack.hasTag() || slot instanceof ResultSlot)
         continue;
       int timer = stack.getTag().getInt("timer");
       if (timer <= 0) {
@@ -91,11 +91,11 @@ public class ItemUnstableIngot extends Item implements IItemColored {
 
   @SubscribeEvent
   public static void onContainerClose(PlayerContainerEvent.Close e) {
-    Container c = e.getContainer();
+    AbstractContainerMenu c = e.getContainer();
     boolean explode = false;
     for (Slot slot : c.slots) {
       ItemStack stack = slot.getItem();
-      if (!checkExplosion(stack) || slot instanceof CraftingResultSlot) continue;
+      if (!checkExplosion(stack) || slot instanceof ResultSlot) continue;
       slot.set(ItemStack.EMPTY);
       explode = true;
     }
@@ -105,7 +105,7 @@ public class ItemUnstableIngot extends Item implements IItemColored {
 
   @SubscribeEvent
   public static void onItemDrop(ItemTossEvent e) {
-    PlayerEntity p = e.getPlayer();
+    Player p = e.getPlayer();
     ItemEntity entityItem = e.getEntityItem();
     ItemStack stack = entityItem.getItem();
     if (checkExplosion(stack)) {
@@ -114,9 +114,9 @@ public class ItemUnstableIngot extends Item implements IItemColored {
     }
   }
 
-  public static void boom(PlayerEntity player) {
-    World world = player.level;
-    world.explode(null, player.getX(), player.getY(), player.getZ(), 1, Explosion.Mode.NONE);
+  public static void boom(Player player) {
+    Level world = player.level;
+    world.explode(null, player.getX(), player.getY(), player.getZ(), 1, Explosion.BlockInteraction.NONE);
     player.hurt(DIVIDE_BY_DIAMOND, 100);
   }
 
@@ -125,7 +125,7 @@ public class ItemUnstableIngot extends Item implements IItemColored {
     if (!stack.hasTag()) {
       return 0xffffff;
     } else {
-      CompoundNBT nbt = stack.getTag();
+      CompoundTag nbt = stack.getTag();
       int color = nbt.getInt("timer");
       double scale = color / 200d;
 

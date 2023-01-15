@@ -1,7 +1,7 @@
 package tfar.unstabletools.datagen;
 
 import com.google.gson.JsonObject;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 public interface FinishedConversion  {
         void serialize(JsonObject json);
