@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "tfar.unstabletools.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "dankstorage.refmap.json",
+  "mixins": [
+    "BlockMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8"
+}

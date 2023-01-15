@@ -35,5 +35,6 @@
   "unstabletools.stable": "Stable",
 
   "death.attack.divide_by_diamond": "%1$s tried to divide by diamond",
-  "death.attack.escape_divide_by_diamond": "%1$s tried to escape divison by diamond"
+  "death.attack.escape_divide_by_diamond": "%1$s tried to escape divison by diamond",
+  "gui.jei.unstabletools.category.block_conversions": "Block Conversions"
 }
