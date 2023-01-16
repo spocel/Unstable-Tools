@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "item": "unstabletools:unstable_ingot"
+    },
+    "P": {
+      "tag": "forge:glass"
+    }
+  },
+  "pattern": [
+    "PPP",
+    "PGP",
+    "PPP"
+  ],
+  "result": {
+    "count": 8,
+    "item": "unstabletools:ethereal_glass"
+  }
+}

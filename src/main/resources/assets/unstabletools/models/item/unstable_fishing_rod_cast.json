@@ -1,6 +1,6 @@
 {
   "parent": "item/fishing_rod",
   "textures": {
-    "layer0": "unstabletools:items/unstable_fishing_rod_cast"
+    "layer0": "unstabletools:item/unstable_fishing_rod_cast"
   }
 }

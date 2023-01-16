@@ -1,7 +1,7 @@
 {
   "parent": "item/handheld_rod",
   "textures": {
-    "layer0": "unstabletools:items/unstable_fishing_rod"
+    "layer0": "unstabletools:item/unstable_fishing_rod"
   },
   "overrides": [
     {

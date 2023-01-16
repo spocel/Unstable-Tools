@@ -5,10 +5,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
-import net.minecraft.data.HashCache;
+import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
@@ -17,13 +18,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import tfar.unstabletools.crafting.ConversionManager;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public class BlockConversionProvider implements DataProvider {
@@ -31,23 +32,25 @@ public class BlockConversionProvider implements DataProvider {
 
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().create();
-    protected final DataGenerator.PathProvider recipePathProvider;
+    protected final PackOutput.PathProvider recipePathProvider;
 
-    public BlockConversionProvider(DataGenerator generator) {
-        this.recipePathProvider = generator.createPathProvider(DataGenerator.Target.DATA_PACK, "recipes");
+    public BlockConversionProvider(PackOutput generator) {
+        this.recipePathProvider = generator.createPathProvider(PackOutput.Target.DATA_PACK, ConversionManager.BLOCK_CONVS);
     }
 
     @Override
-    public void run(CachedOutput cache) {
+    public CompletableFuture<?> run(CachedOutput cache) {
         Set<ResourceLocation> set = Sets.newHashSet();
+        List<CompletableFuture<?>> list = new ArrayList<>();
         registerRecipes((conversion) -> {
             if (!set.add(conversion.getID())) {
                 throw new IllegalStateException("Duplicate recipe " + conversion.getID());
             } else {
+                list.add(DataProvider.saveStable(cache, conversion.getRecipeJson(), this.recipePathProvider.json(conversion.getID())));
                 saveRecipe(cache, conversion.getRecipeJson(), this.recipePathProvider.json(conversion.getID()));
             }
         });
-
+        return CompletableFuture.allOf(list.toArray(CompletableFuture[]::new));
     }
 
     /**
@@ -56,7 +59,7 @@ public class BlockConversionProvider implements DataProvider {
     private static void saveRecipe(CachedOutput cache, JsonObject json, Path path) {
         try {
             DataProvider.saveStable(cache, json, path);
-        } catch (IOException ioexception) {
+        } catch (Exception ioexception) {
             LOGGER.error("Couldn't save recipe {}", path, ioexception);
         }
     }
@@ -103,7 +106,7 @@ public class BlockConversionProvider implements DataProvider {
 
         for (DyeColor dyeColor : DyeColor.values()) {
             String name = dyeColor.name().toLowerCase(Locale.ROOT);
-            Block from = Registry.BLOCK.get(new ResourceLocation(name+"_stained_glass"));
+            Block from = BuiltInRegistries.BLOCK.get(new ResourceLocation(name+"_stained_glass"));
             consumer.accept(BlockConversionBuilder.createBlockConversion(from,Blocks.GLASS,new ResourceLocation("stained_glass_"+name)));
         }
 

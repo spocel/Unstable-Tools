@@ -2,6 +2,8 @@ package tfar.unstabletools;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -15,6 +17,7 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -136,48 +139,56 @@ public class UnstableTools {
 
   public static final ArmorMaterial UNSTABLE_ARMOR = new UnstableArmorMaterial();
 
-  public static CreativeModeTab creativeTab = new CreativeModeTab(MODID) {
-    @Override
-    public ItemStack makeIcon() {
-      return new ItemStack(ModItems.unstable_pickaxe);
-    }
-  };
-
   @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
   public static class RegistryEvents {
     @SubscribeEvent
     public static void registerBlock(RegisterEvent event) {
-      event.register(Registry.BLOCK_REGISTRY, new ResourceLocation(MODID, "unstable_block"), () -> ModBlocks.unstable_block);
-      event.register(Registry.ITEM_REGISTRY, new ResourceLocation(MODID, "unstable_ingot"), () -> ModItems.unstable_ingot);
-      event.register(Registry.ITEM_REGISTRY, new ResourceLocation(MODID,"unstable_shears"), () -> ModItems.unstable_shears);
+      event.register(Registries.BLOCK, new ResourceLocation(MODID, "unstable_block"), () -> ModBlocks.unstable_block);
+      event.register(Registries.BLOCK, new ResourceLocation(MODID, "ethereal_glass"), () -> ModBlocks.ethereal_glass);
 
-      event.register(Registry.ITEM_REGISTRY,new ResourceLocation(MODID,"unstable_block"), () -> ModItems.unstable_block);
+      event.register(Registries.ITEM, new ResourceLocation(MODID, "unstable_ingot"), () -> ModItems.unstable_ingot);
+      event.register(Registries.ITEM, new ResourceLocation(MODID,"unstable_shears"), () -> ModItems.unstable_shears);
 
-      event.register(Registry.ITEM_REGISTRY, new ResourceLocation(MODID, "unstable_axe"), () -> ModItems.unstable_axe);
-      event.register(Registry.ITEM_REGISTRY, new ResourceLocation(MODID,"unstable_shovel"), () -> ModItems.unstable_shovel);
-      event.register(Registry.ITEM_REGISTRY, new ResourceLocation(MODID,"unstable_pickaxe"), () -> ModItems.unstable_pickaxe);
-      event.register(Registry.ITEM_REGISTRY,new ResourceLocation(MODID,"unstable_sword"),() -> ModItems.unstable_sword);
-      event.register(Registry.ITEM_REGISTRY, new ResourceLocation(MODID,"unstable_hoe"), () -> ModItems.unstable_hoe);
+      event.register(Registries.ITEM,new ResourceLocation(MODID,"unstable_block"), () -> ModItems.unstable_block);
+      event.register(Registries.ITEM,new ResourceLocation(MODID,"ethereal_glass"), () -> ModItems.ethereal_glass);
 
-      event.register(Registry.ITEM_REGISTRY,new ResourceLocation(MODID, "unstable_fishing_rod"), () -> ModItems.unstable_fishing_rod);
-      event.register(Registry.ITEM_REGISTRY,new ResourceLocation(MODID,"unstable_bow"), () -> ModItems.unstable_bow);
+      event.register(Registries.ITEM, new ResourceLocation(MODID, "unstable_axe"), () -> ModItems.unstable_axe);
+      event.register(Registries.ITEM, new ResourceLocation(MODID,"unstable_shovel"), () -> ModItems.unstable_shovel);
+      event.register(Registries.ITEM, new ResourceLocation(MODID,"unstable_pickaxe"), () -> ModItems.unstable_pickaxe);
+      event.register(Registries.ITEM,new ResourceLocation(MODID,"unstable_sword"),() -> ModItems.unstable_sword);
+      event.register(Registries.ITEM, new ResourceLocation(MODID,"unstable_hoe"), () -> ModItems.unstable_hoe);
 
-      event.register(Registry.ITEM_REGISTRY,new ResourceLocation(MODID, "unstable_helmet"), () -> ModItems.unstable_helmet);
-      event.register(Registry.ITEM_REGISTRY,new ResourceLocation(MODID, "unstable_chestplate"), () -> ModItems.unstable_chestplate);
-      event.register(Registry.ITEM_REGISTRY,new ResourceLocation(MODID,"unstable_leggings"),() -> ModItems.unstable_leggings);
-      event.register(Registry.ITEM_REGISTRY,new ResourceLocation(MODID,"unstable_boots"), () -> ModItems.unstable_boots);
-      event.register(Registry.ITEM_REGISTRY,new ResourceLocation(MODID,"inactive_division_sign"), () -> ModItems.inactive_division_sign);
-      event.register(Registry.ITEM_REGISTRY,new ResourceLocation(MODID,"division_sign"), () -> ModItems.division_sign);
-      event.register(Registry.ITEM_REGISTRY,new ResourceLocation(MODID,"stable_division_sign"), () -> ModItems.stable_division_sign);
+      event.register(Registries.ITEM,new ResourceLocation(MODID, "unstable_fishing_rod"), () -> ModItems.unstable_fishing_rod);
+      event.register(Registries.ITEM,new ResourceLocation(MODID,"unstable_bow"), () -> ModItems.unstable_bow);
 
-      event.register(Registry.RECIPE_SERIALIZER_REGISTRY, new ResourceLocation(MODID,"division"), () -> ModRecipeSerializer.division);
+      event.register(Registries.ITEM,new ResourceLocation(MODID, "unstable_helmet"), () -> ModItems.unstable_helmet);
+      event.register(Registries.ITEM,new ResourceLocation(MODID, "unstable_chestplate"), () -> ModItems.unstable_chestplate);
+      event.register(Registries.ITEM,new ResourceLocation(MODID,"unstable_leggings"),() -> ModItems.unstable_leggings);
+      event.register(Registries.ITEM,new ResourceLocation(MODID,"unstable_boots"), () -> ModItems.unstable_boots);
+      event.register(Registries.ITEM,new ResourceLocation(MODID,"inactive_division_sign"), () -> ModItems.inactive_division_sign);
+      event.register(Registries.ITEM,new ResourceLocation(MODID,"division_sign"), () -> ModItems.division_sign);
+      event.register(Registries.ITEM,new ResourceLocation(MODID,"stable_division_sign"), () -> ModItems.stable_division_sign);
 
+      event.register(Registries.RECIPE_SERIALIZER, new ResourceLocation(MODID,"division"), () -> ModRecipeSerializer.division);
+
+    }
+
+    @SubscribeEvent
+    public static void registerTab(CreativeModeTabEvent.Register event) {
+      event.registerCreativeModeTab(new ResourceLocation(MODID,MODID),
+              builder -> builder.title(Component.translatable("itemGroup.unstabletools"))
+                      .icon(ModItems.unstable_pickaxe::getDefaultInstance)
+                      .displayItems((pEnabledFeatures, pOutput, pDisplayOperatorCreativeTab) -> {
+                        for (Item item : ModItems.getItems()) {
+                          pOutput.accept(item);
+                        }
+                      }).build()
+      );
     }
   }
 
   public static void onBlockDrops(Level worldIn, BlockPos pos, ItemStack stackToSpawn, Entity entity, ItemStack stack) {
-    if (entity instanceof Player) {
-      Player player = (Player) entity;
+    if (entity instanceof Player player) {
       if (stack.getItem() instanceof ItemUnstableShears) {
         player.addItem(stackToSpawn);
       }

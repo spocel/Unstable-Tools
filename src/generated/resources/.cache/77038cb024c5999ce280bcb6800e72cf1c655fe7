@@ -1,0 +1,7 @@
+// 1.19.3	2023-01-16T00:38:47.0119963	Model Definitions
+9e75bd601e88c3e880c4020f61d45597503042b1 assets/unstabletools/blockstates/ethereal_glass.json
+c0136c978b483e6715e069e698264c9fd7677e3f assets/unstabletools/blockstates/unstable_block.json
+e7d224374c959312984bac679c0ce33d90e9bca7 assets/unstabletools/models/block/ethereal_glass.json
+f62214269af66478fadda6814cc31599f463b06b assets/unstabletools/models/block/unstable_block.json
+63fc27bf22e24733bdcfd5b434449e1b316a0116 assets/unstabletools/models/item/ethereal_glass.json
+63ea686a917522f8bb87f5aefd05b83b55f6472b assets/unstabletools/models/item/unstable_block.json

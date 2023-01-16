@@ -1,6 +1,6 @@
 {
   "parent": "item/handheld",
   "textures": {
-    "layer0": "unstabletools:items/division_sign"
+    "layer0": "unstabletools:item/division_sign"
   }
 }

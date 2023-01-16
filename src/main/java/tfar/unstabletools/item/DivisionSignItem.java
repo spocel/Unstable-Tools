@@ -178,17 +178,6 @@ public class DivisionSignItem extends StableDivisionSignItem {
     }
 
     @Override
-    public void fillItemCategory(CreativeModeTab group, NonNullList<ItemStack> items) {
-        super.fillItemCategory(group, items);
-        if (this == ModItems.division_sign)
-            if (group == this.getItemCategory() || group == CreativeModeTab.TAB_SEARCH) {
-                ItemStack stack = new ItemStack(this);
-                stack.getOrCreateTag().putInt("d", Config.ServerConfig.uses.get());
-                items.add(stack);
-            }
-    }
-
-    @Override
     public int getColor(ItemStack stack, int tintIndex) {
         return this == ModItems.inactive_division_sign ? 0xff0000 : 0xeedd00;
     }

@@ -1,6 +1,7 @@
 package tfar.unstabletools.crafting;
 
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.common.ForgeConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
@@ -29,7 +30,7 @@ public class Config {
 
     ServerConfig(ForgeConfigSpec.Builder builder) {
       List<String> strings = new ArrayList<>();
-      strings.add(Registry.MENU.getKey(MenuType.CRAFTING).toString());
+      strings.add(BuiltInRegistries.MENU.getKey(MenuType.CRAFTING).toString());
       strings.add("fastbench:fastbench");
       builder.push("general");
       allowed_containers = builder

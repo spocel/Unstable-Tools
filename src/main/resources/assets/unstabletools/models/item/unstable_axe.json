@@ -1,6 +1,6 @@
 {
   "parent": "item/handheld",
   "textures": {
-    "layer0": "unstabletools:items/unstable_axe"
+    "layer0": "unstabletools:item/unstable_axe"
   }
 }

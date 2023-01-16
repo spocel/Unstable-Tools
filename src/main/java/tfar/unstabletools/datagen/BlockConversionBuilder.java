@@ -1,6 +1,7 @@
 package tfar.unstabletools.datagen;
 
 import com.google.gson.JsonObject;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.Registry;
@@ -8,7 +9,7 @@ import net.minecraft.core.Registry;
 public class BlockConversionBuilder {
 
     public static Result createBlockConversion(Block from,Block to) {
-        return createBlockConversion(from,to,Registry.BLOCK.getKey(to));
+        return createBlockConversion(from,to, BuiltInRegistries.BLOCK.getKey(to));
     }
 
     public static Result createBlockConversion(Block from,Block to,ResourceLocation location) {
@@ -28,9 +29,9 @@ public class BlockConversionBuilder {
         }
 
         public void serialize(JsonObject json) {
-            json.addProperty("from", Registry.BLOCK.getKey(this.from).toString());
+            json.addProperty("from", BuiltInRegistries.BLOCK.getKey(this.from).toString());
 
-            json.addProperty("to", Registry.BLOCK.getKey(this.to).toString());
+            json.addProperty("to", BuiltInRegistries.BLOCK.getKey(this.to).toString());
         }
 
         /**

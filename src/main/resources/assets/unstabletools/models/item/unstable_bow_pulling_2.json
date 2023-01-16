@@ -1,6 +1,6 @@
 {
     "parent": "item/bow",
     "textures": {
-        "layer0": "unstabletools:items/unstable_bow_pulling_2"
+        "layer0": "unstabletools:item/unstable_bow_pulling_2"
     }
 }

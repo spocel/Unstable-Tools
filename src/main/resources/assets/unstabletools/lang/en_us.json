@@ -21,6 +21,7 @@
   "item.unstabletools.unstable_chestplate": "Unstable Chestplate",
   "item.unstabletools.unstable_leggings": "Unstable Leggings",
   "item.unstabletools.unstable_boots": "Unstable Boots",
+  "block.unstabletools.ethereal_glass": "Ethereal Glass",
 
   "itemGroup.unstabletools": "Unstable Tools",
 
@@ -36,5 +37,5 @@
 
   "death.attack.divide_by_diamond": "%1$s tried to divide by diamond",
   "death.attack.escape_divide_by_diamond": "%1$s tried to escape divison by diamond",
-  "gui.jei.unstabletools.category.block_conversions": "Block Conversions"
+  "gui.rei.unstabletools.category.block_conversions": "Block Conversions"
 }

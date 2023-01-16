@@ -1,59 +1,52 @@
 package tfar.unstabletools.integration;
 
-import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
-import mezz.jei.api.gui.drawable.IDrawable;
-import mezz.jei.api.gui.drawable.IDrawableStatic;
-import mezz.jei.api.helpers.IGuiHelper;
-import mezz.jei.api.recipe.IFocusGroup;
-import mezz.jei.api.recipe.RecipeIngredientRole;
-import mezz.jei.api.recipe.RecipeType;
-import mezz.jei.api.recipe.category.IRecipeCategory;
+import com.google.common.collect.Lists;
+import com.mojang.blaze3d.systems.RenderSystem;
+import me.shedaniel.math.Point;
+import me.shedaniel.math.Rectangle;
+import me.shedaniel.rei.api.client.REIRuntime;
+import me.shedaniel.rei.api.client.gui.Renderer;
+import me.shedaniel.rei.api.client.gui.widgets.Widget;
+import me.shedaniel.rei.api.client.gui.widgets.Widgets;
+import me.shedaniel.rei.api.client.registry.display.DisplayCategory;
+import me.shedaniel.rei.api.common.category.CategoryIdentifier;
+import me.shedaniel.rei.api.common.util.EntryStacks;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
-import tfar.unstabletools.UnstableTools;
-import tfar.unstabletools.crafting.ConversionRecipe;
+import net.minecraft.util.Mth;
+import net.minecraft.world.item.Items;
 import tfar.unstabletools.init.ModItems;
 
-public class ConversionRecipeCategory implements IRecipeCategory<ConversionRecipe> {
+import java.util.List;
 
-    private final MutableComponent localizedName;
-    private final IDrawableStatic background;
-    private final IDrawable icon;
-
-    public static final ResourceLocation RECIPE_GUI_VANILLA = new ResourceLocation(UnstableTools.MODID, "textures/gui/jei/block_conversion.png");
-
-
-    public ConversionRecipeCategory(IGuiHelper guiHelper) {
-        this.localizedName = Component.translatable("gui.jei.unstabletools.category.block_conversions");
-        this.background = guiHelper.drawableBuilder(RECIPE_GUI_VANILLA, 0, 0, 101, 18).build();
-        this.icon = guiHelper.createDrawableItemStack(new ItemStack(ModItems.unstable_hoe));
-    }
-
+public class ConversionRecipeCategory implements DisplayCategory<ConversionRecipeDisplay> {
     @Override
-    public RecipeType<ConversionRecipe> getRecipeType() {
-        return JEIPlugin.TYPE;
+    public CategoryIdentifier<? extends ConversionRecipeDisplay> getCategoryIdentifier() {
+        return REIPlugin.TYPE;
     }
 
     @Override
     public Component getTitle() {
-        return localizedName;
+        return Component.translatable("gui.rei.unstabletools.category.block_conversions");
     }
 
     @Override
-    public IDrawable getBackground() {
-        return background;
+    public Renderer getIcon() {
+        return EntryStacks.of(ModItems.unstable_hoe);
     }
 
     @Override
-    public IDrawable getIcon() {
-        return icon;
-    }
+    public List<Widget> setupDisplay(ConversionRecipeDisplay display, Rectangle bounds) {
+        Point startPoint = new Point(bounds.getCenterX() - 52, bounds.getCenterY()-8);
+        List<Widget> widgets = Lists.newArrayList();
+        widgets.add(Widgets.createRecipeBase(bounds));
 
+        widgets.add(Widgets.createSlot(new Point(startPoint.x, startPoint.y)).entries(display.getInputEntries().get(0)).markInput());
+        widgets.add(Widgets.createArrow(new Point(startPoint.x + 27, startPoint.y)));
+        widgets.add(Widgets.createSlot(new Point(startPoint.x + 63, startPoint.y)).entries(display.getOutputEntries().get(0)).markOutput());
+        return widgets;
+    }
     @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, ConversionRecipe recipe, IFocusGroup focuses) {
-        builder.addSlot(RecipeIngredientRole.INPUT, 0, 0).addItemStack(new ItemStack(recipe.getFrom().asItem()));
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 83, 0).addItemStack(new ItemStack(recipe.getTo().asItem()));
+    public int getDisplayHeight() {
+        return 24;
     }
 }

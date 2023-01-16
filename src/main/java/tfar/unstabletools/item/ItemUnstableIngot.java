@@ -3,6 +3,7 @@ package tfar.unstabletools.item;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.damagesource.DamageSource;
@@ -60,7 +61,7 @@ public class ItemUnstableIngot extends Item implements IItemColored {
 
     try {
       MenuType<?> type = container.getType();
-      if (!Config.ServerConfig.allowed_containers.get().contains(Registry.MENU.getKey(type).toString()))
+      if (!Config.ServerConfig.allowed_containers.get().contains(BuiltInRegistries.MENU.getKey(type).toString()))
         return;
     } catch (Exception ex) {
       return;
@@ -116,7 +117,7 @@ public class ItemUnstableIngot extends Item implements IItemColored {
 
   public static void boom(Player player) {
     Level world = player.level;
-    world.explode(null, player.getX(), player.getY(), player.getZ(), 1, Explosion.BlockInteraction.NONE);
+    world.explode(null, player.getX(), player.getY(), player.getZ(), 1, Level.ExplosionInteraction.NONE);
     player.hurt(DIVIDE_BY_DIAMOND, 100);
   }
 

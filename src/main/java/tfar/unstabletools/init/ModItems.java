@@ -19,14 +19,14 @@ import static tfar.unstabletools.UnstableTools.*;
 public class ModItems {
 
     private static final Set<Item> ITEMS = new HashSet<>();
-    static Item.Properties properties = new Item.Properties().tab(creativeTab);
-
+    static Item.Properties properties = new Item.Properties();
+    public static final Item ethereal_glass = new BlockItem(ModBlocks.ethereal_glass, properties);
+    public static final Item unstable_block = new BlockItem(ModBlocks.unstable_block, properties);
     public static final Item unstable_ingot = new ItemUnstableIngot(properties);
     public static final Item inactive_division_sign = new DivisionSignItem(properties);
     public static final Item division_sign = new DivisionSignItem(properties);
-    public static final Item stable_division_sign = new StableDivisionSignItem(new Item.Properties().tab(creativeTab).craftRemainder(ModItems.stable_division_sign));
+    public static final Item stable_division_sign = new StableDivisionSignItem(new Item.Properties().craftRemainder(ModItems.stable_division_sign));
     public static final Item unstable_axe = new ItemUnstableAxe(UNSTABLE, 9, -3, properties);
-    public static final Item unstable_block = new BlockItem(ModBlocks.unstable_block, properties);
     public static final Item unstable_bow = new UnstableBowItem(properties);
     public static final Item unstable_fishing_rod = new FishingRodItem(properties);
     public static final Item unstable_pickaxe = new PickaxeItem(UNSTABLE, 1, -2.8f, properties);

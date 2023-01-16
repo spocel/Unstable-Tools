@@ -16,5 +16,6 @@ public class Client {
   public static void colors(RegisterColorHandlersEvent.Item e) {
     ModItems.getItems().stream().filter(IItemColored.class::isInstance).forEach(item -> e.register(((IItemColored) item)::getColor, item));
     ItemBlockRenderTypes.setRenderLayer(ModBlocks.unstable_block, RenderType.cutout());
+    ItemBlockRenderTypes.setRenderLayer(ModBlocks.ethereal_glass, RenderType.cutout());
   }
 }
