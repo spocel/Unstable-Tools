@@ -23,7 +23,7 @@ public class BlockMixin {
     private static final ThreadLocal<Entity> entityThreadLocal = ThreadLocal.withInitial(() -> null);
     private static final ThreadLocal<ItemStack> itemStackThreadLocal = ThreadLocal.withInitial(() -> ItemStack.EMPTY);
 
-    @Inject(remap = false,method = "getDrops(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/item/ItemStack;)Ljava/util/List;",at = @At("HEAD"))
+    @Inject(method = "getDrops(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/item/ItemStack;)Ljava/util/List;",at = @At("HEAD"))
 
     private static void interceptEntity(BlockState state, ServerLevel worldIn, BlockPos pos, BlockEntity tileEntityIn, Entity entityIn, ItemStack stack, CallbackInfoReturnable<List<ItemStack>> cir) {
         entityThreadLocal.set(entityIn);
