@@ -1,0 +1,14 @@
+{
+  "pattern": [
+    "D"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "D": {
+      "item": "unstabletools:unstable_sword"
+    }
+  },
+  "result": {
+    "item": "unstabletools:soul_fragment"
+  }
+}

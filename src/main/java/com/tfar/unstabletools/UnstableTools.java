@@ -4,6 +4,7 @@ import com.tfar.unstabletools.armor.ItemUnstableArmor;
 import com.tfar.unstabletools.block.BlockUnstableBlock;
 import com.tfar.unstabletools.item.ItemDivisionSign;
 import com.tfar.unstabletools.item.ItemUnstableIngot;
+import com.tfar.unstabletools.item.ItemSoul;
 import com.tfar.unstabletools.tools.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -85,6 +86,7 @@ public class UnstableTools {
 
     registerItem(new ItemUnstableIngot(), "unstable_ingot", registry);
     registerItem(new ItemUnstableShears(), "unstable_shears", registry);
+    registerItem(new ItemSoul(), "soul_fragment", registry);
 
     registerItemBlock(ObjectHolders.unstableBlock, registry);
 
