@@ -57,11 +57,8 @@ public class ItemSoul extends Item {
                 AttributeModifier maxHealthModifier = maxHealthAttribute.getModifier(MAX_HEALTH_MODIFIER_ID);
                 l=maxHealthModifier.getAmount();
                 l+=0.1D;
-                maxHealthAttribute.removeModifier(maxHealthModifier);/*
-                double increaseAmount = maxHealthAttribute.getAttributeValue()*0.1;
-                maxHealthModifier = new AttributeModifier(MAX_HEALTH_MODIFIER_ID, "Health boost",increaseAmount, 1);*/
+                maxHealthAttribute.removeModifier(maxHealthModifier);
                 maxHealthAttribute.applyModifier(new AttributeModifier(MAX_HEALTH_MODIFIER_ID, "Health boost",l, 2));
-                /*player.addChatComponentMessage()*/
             }
             itemstack.shrink(1);
         }
@@ -75,15 +72,6 @@ public class ItemSoul extends Item {
         if (!worldIn.isRemote) {
             double l=0.0D;
             IAttributeInstance maxHealthAttribute = playerIn.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH);
-            /*if(maxHealthModifier!=null)
-                l=maxHealthModifier.getAmount();
-            l-=0.1D;
-            double c=Math.min(Math.min(maxHealthAttribute.getBaseValue()*(1.0D+l),maxHealthAttribute.getAttributeValue()),20.0D*(1.0D+l));
-            if( c >=6.0D){
-                stack.setItemDamage(0);
-                maxHealthAttribute.removeModifier(maxHealthModifier);
-                maxHealthAttribute.applyModifier(new AttributeModifier(MAX_HEALTH_MODIFIER_ID, "Health boost",l, 2));
-            }*/
             if (maxHealthAttribute.getModifier(MAX_HEALTH_MODIFIER_ID) == null) {
                 AttributeModifier maxHealthModifier = new AttributeModifier(MAX_HEALTH_MODIFIER_ID, "Health boost", -0.1, 2);
                 maxHealthAttribute.applyModifier(maxHealthModifier);
