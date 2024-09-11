@@ -42,15 +42,7 @@ import java.util.UUID;
 
 public class ItemSoul extends Item {
 
-    public ItemSoul(){
-        /*setUnlocalizedName("unstabletools:soul_fragment");*/
-        /*setTextureName("extrautils:mini-soul");*/
-        /*setCreativeTab(ExtraUtils2.creativeTabExtraUtils);*/
-        setMaxStackSize(1);
-        setHasSubtypes(true);
-    }
     private static final UUID MAX_HEALTH_MODIFIER_ID = UUID.fromString("8f3c82ec-5b32-4b1b-8957-4f6fba3f89c9");
-    private static final UUID MAX_HEALTH_MODIFIER_ID1 = UUID.fromString("8f3c82ec-5b32-4b1b-8957-4f6fba3f89c8");
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
         ItemStack itemstack = playerIn.getHeldItem(handIn);
